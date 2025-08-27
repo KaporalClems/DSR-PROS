@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSR PROS 2025 - Scanner de billets</title>
+    
+    <!-- Thème de couleur pour PWA -->
+    <meta name="theme-color" content="#10B981"/> <!-- Vert Émeraude -->
+    <!-- Manifeste PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png">
+    
+    <!-- Scripts et polices externes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Définition de la police Inter pour tout le corps */
+        body {
+            font-family: 'Inter', sans-serif;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE 10+ */
+        }
+        body::-webkit-scrollbar { /* WebKit */
+            display: none;
+        }
+
+        /* Styles pour l'animation du logo de chargement */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        
+        /* Styles pour l'animation d'ouverture de page */
+        .page-transition {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Style pour la carte "pkpass" */
+        .pkpass-card {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+        }
+        .pkpass-card:hover {
+            transform: scale(1.02);
+        }
+        .pkpass-card::before, .pkpass-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 30px;
+            background: #f3f4f6; /* bg-gray-100 */
+            border-radius: 50%;
+        }
+        .pkpass-card::before {
+            left: -15px;
+            transform: translateY(-50%);
+        }
+        .pkpass-card::after {
+            right: -15px;
+            transform: translateY(-50%);
+        }
+
+        /* Style pour le bouton de scan */
+        .scan-button {
+            transition: transform 0.3s ease-in-out;
+            animation: bounce 2s infinite;
+        }
+        .scan-button:active {
+            transform: scale(0.9);
+            animation: none;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Styles pour le menu latéral et la surcouche de recherche */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #sidebar.open {
+            transform: translateX(0);
+        }
+        #search-overlay {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        #search-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Styles pour la modale de succès et d'erreur */
+        .modal-success {
+            border-left: 4px solid #10B981; /* green-500 */
+        }
+        .modal-error {
+            border-left: 4px solid #EF4444; /* red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans h-screen overflow-hidden flex flex-col">
+
+    <!-- Écran de chargement -->
+    <div id="loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center transition-opacity duration-500">
+        <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="w-32 h-32 pulse-animation">
+    </div>
+
+    <!-- En-tête de l'application -->
+    <header class="bg-emerald-500 text-white p-4 flex items-center justify-between shadow-lg sticky top-0 z-20">
+        <div class="flex items-center space-x-2">
+            <button id="hamburger-menu-btn" class="text-white focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 6H20V8H4V6ZM4 11H20V13H4V11ZM4 16H20V18H4V16Z" />
+                </svg>
+            </button>
+            <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-8">
+        </div>
+        <button id="search-btn" class="text-white focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.71 20.29L18.41 17C19.4 15.82 20 14.25 20 12.5C20 8.36 16.64 5 12.5 5C8.36 5 5 8.36 5 12.5C5 16.64 8.36 20 12.5 20C14.25 20 15.82 19.4 17 18.41L20.29 21.71C20.68 22.1 21.32 22.1 21.71 21.71C22.1 21.32 22.1 20.68 21.71 20.29ZM12.5 18C9.55 18 7 15.45 7 12.5C7 9.55 9.55 7 12.5 7C15.45 7 18 9.55 18 12.5C18 15.45 15.45 18 12.5 18Z" />
+            </svg>
+        </button>
+    </header>
+
+    <!-- Menu latéral (masqué par défaut) -->
+    <nav id="sidebar" class="fixed top-0 left-0 h-screen w-64 bg-white shadow-xl z-40 p-6 flex flex-col">
+        <button id="close-sidebar-btn" class="self-end text-gray-500 hover:text-gray-800 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
+            </svg>
+        </button>
+        <div class="flex flex-col space-y-4 mt-8 flex-grow">
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="home-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L4 9V20H20V9L12 2ZM18 18H15V12H9V18H6V10L12 5L18 10V18Z" />
+                </svg> Accueil
+            </button>
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="prestataires-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
+                </svg> Prestataires
+            </button>
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="intervenants-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
+                </svg> Intervenants
+            </button>
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="checkin-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z" />
+                </svg> Check-in
+            </button>
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="programme-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4ZM19 6V7H5V6H19ZM5 20V9H19V20H5ZM7 11H17V13H7V11ZM7 15H17V17H7V15Z" />
+                </svg> Programme
+            </button>
+            <button class="nav-sidebar-btn text-lg font-semibold text-gray-700 hover:text-orange-500 transition-colors text-left" data-page="about-page">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 inline-block mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 19H11V17H13V19ZM13 15H11V5H13V15Z" />
+                </svg> À propos
+            </button>
+        </div>
+        
+        <!-- Pied de page du menu latéral -->
+        <div class="mt-auto pt-6 border-t border-gray-200">
+            <p class="text-xs text-gray-400">&copy; <span id="copyright-year"></span> Tous droits réservés.</p>
+            <p class="text-xs text-gray-400">Version <span id="app-version">1.0.0</span></p>
+        </div>
+    </nav>
+
+    <!-- Contenu principal de l'application -->
+    <main id="app-content" class="flex-grow overflow-y-auto pb-20 hidden">
+        
+        <!-- Page d'accueil -->
+        <div id="home-page" class="p-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Accueil</h1>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="menu-item bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:bg-gray-50 transition-colors" data-page="prestataires-page">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-orange-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
+                    </svg>
+                    <p class="mt-2 font-semibold">Prestataires</p>
+                </div>
+                <div class="menu-item bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:bg-gray-50 transition-colors" data-page="intervenants-page">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-amber-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
+                    </svg>
+                    <p class="mt-2 font-semibold">Intervenants</p>
+                </div>
+                <div class="menu-item bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:bg-gray-50 transition-colors" data-page="checkin-page">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 7L9 19L3.5 13.5L4.91 12.09L9 16.17L19.59 5.59L21 7Z" />
+                    </svg>
+                    <p class="mt-2 font-semibold">Check-in</p>
+                </div>
+                <div id="admin-btn" class="menu-item bg-white p-4 rounded-lg shadow-md text-center cursor-pointer hover:bg-gray-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8C9 9.65685 10.3431 11 12 11ZM12 13C9.33 13 4 14.33 4 17V19H20V17C20 14.33 14.67 13 12 13ZM15.5 3H12V1L15.5 1.00001L15.5 3ZM15.5 21H12V23H15.5V21ZM5.5 13H8V11H5.5V13ZM18.5 13H16V11H18.5V13Z" />
+                    </svg>
+                    <p class="mt-2 font-semibold">Administrateur</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Prestataires -->
+        <div id="prestataires-page" class="p-4 hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Prestataires</h1>
+            <input type="search" id="search-prestataires" placeholder="Rechercher..." class="w-full p-2 mb-4 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+            <div id="prestataires-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Page Intervenants -->
+        <div id="intervenants-page" class="p-4 hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Intervenants</h1>
+            <input type="search" id="search-intervenants" placeholder="Rechercher..." class="w-full p-2 mb-4 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none transition-all">
+            <div id="intervenants-list" class="space-y-3"></div>
+        </div>
+        
+        <!-- Page Check-in -->
+        <div id="checkin-page" class="p-4 hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-3xl font-bold text-gray-800">Historique des Validations</h1>
+                <span class="text-lg font-semibold text-gray-600">Total : <span id="total-scans">0</span></span>
+            </div>
+            <div id="checkins-list" class="space-y-4">
+                <!-- Les entrées de check-in seront ajoutées ici dynamiquement -->
+            </div>
+        </div>
+        
+        <!-- Page Scanner -->
+        <div id="scanner-page" class="p-4 hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Scanner le ticket</h1>
+            <div id="qr-reader" class="w-full rounded-lg"></div>
+            <div id="scan-result" class="mt-4 text-center font-medium p-4 rounded-lg"></div>
+        </div>
+
+        <!-- Page de contenu statique : Programme -->
+        <div id="programme-page" class="p-6 hidden text-center">
+             <h1 class="text-3xl font-bold text-gray-800 mb-6">Programme</h1>
+             <p class="text-gray-600">Le contenu de la page Programme sera bientôt disponible.</p>
+        </div>
+
+        <!-- Nouvelle page de contenu statique : À propos -->
+        <div id="about-page" class="p-6 hidden">
+             <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">À propos</h1>
+             <div class="bg-white rounded-lg shadow-md p-6 max-w-lg mx-auto">
+                <p class="text-gray-700 mb-4">Cette application mobile a été conçue pour faciliter le check-in des prestataires et intervenants lors de l'événement DSR PROS 2025. Elle permet de scanner les tickets pour valider l'accès et de consulter rapidement la liste des participants.</p>
+                <p class="text-gray-700 font-semibold">Fonctionnalités :</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>Scanner de QR Code/Code-barres</li>
+                    <li>Listes des prestataires et intervenants avec recherche rapide</li>
+                    <li>Tableau de bord administrateur pour la gestion des données</li>
+                    <li>Fonctionne hors ligne (PWA)</li>
+                </ul>
+             </div>
+        </div>
+        
+        <!-- Page Admin -->
+        <div id="admin-page" class="p-6 hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Panneau d'administration</h1>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-bold mb-4">Statistiques de l'événement</h2>
+                <div id="data-stats" class="space-y-2 text-sm text-gray-700">
+                    <p>Total des scans : <span id="total-scans-admin">0</span></p>
+                    <p>Prestataires validés : <span id="prestataires-checkedin">0</span> / <span id="prestataires-total">0</span></p>
+                    <p>Intervenants validés : <span id="intervenants-checkedin">0</span> / <span id="intervenants-total">0</span></p>
+                </div>
+                <button id="reset-data-btn" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors">Réinitialiser les données de check-in</button>
+            </div>
+            
+            <!-- Nouveau formulaire d'ajout d'une personne -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4">Ajouter une nouvelle personne</h2>
+                <form id="add-person-form">
+                    <div class="mb-4">
+                        <label for="type-select" class="block text-gray-700 font-semibold mb-2">Type de personne</label>
+                        <select id="type-select" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                            <option value="prestataire">Prestataire</option>
+                            <option value="intervenant">Intervenant</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="prenom-input" class="block text-gray-700 font-semibold mb-2">Prénom</label>
+                        <input type="text" id="prenom-input" placeholder="Prénom" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                    </div>
+                    <div class="mb-4">
+                        <label for="nom-input" class="block text-gray-700 font-semibold mb-2">Nom</label>
+                        <input type="text" id="nom-input" placeholder="Nom" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                    </div>
+                    <div class="mb-4">
+                        <label for="entreprise-input" class="block text-gray-700 font-semibold mb-2">Entreprise</label>
+                        <input type="text" id="entreprise-input" placeholder="Entreprise" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-600 transition-colors">Ajouter</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barre de navigation inférieure -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg flex justify-around p-2 border-t border-gray-200 z-30">
+        <button class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors" data-page="prestataires-page">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
+            </svg>
+            <span class="text-xs">Prestataires</span>
+        </button>
+        <button id="scan-button" class="scan-button bg-orange-500 text-white rounded-full w-16 h-16 flex items-center justify-center -mt-8 shadow-xl border-4 border-white z-40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 6H14V8H10V6ZM10 10H14V14H10V10ZM10 16H14V18H10V16Z" />
+            </svg>
+            <span class="text-xs">Scan</span>
+        </button>
+        <button class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors" data-page="intervenants-page">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
+            </svg>
+            <span class="text-xs">Intervenants</span>
+        </button>
+    </nav>
+    
+    <!-- Modale pour la carte individuelle (pkpass) -->
+    <div id="pkpass-modal" class="fixed inset-0 bg-gray-100 z-40 hidden p-4 flex flex-col justify-center items-center transition-opacity duration-300">
+        <div class="pkpass-card w-full max-w-sm">
+            <div class="p-6 border-b-2 border-dashed border-gray-300">
+                <p id="pkpass-type" class="text-sm uppercase text-gray-500"></p>
+                <h2 id="pkpass-name" class="text-3xl font-bold text-gray-800"></h2>
+                <p id="pkpass-company" class="text-lg text-gray-600"></p>
+            </div>
+            <div class="p-6 flex flex-col items-center">
+                <img id="pkpass-barcode-img" class="mb-4" alt="Code-barres"/>
+                <p id="pkpass-id" class="font-mono text-sm text-gray-500"></p>
+            </div>
+        </div>
+        <button id="close-pkpass-btn" class="mt-8 bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 transition-colors">Fermer</button>
+    </div>
+    
+    <!-- Modale pour le mot de passe Admin -->
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
+            <h2 class="text-xl font-bold mb-4">Accès Administrateur</h2>
+            <p class="text-sm text-gray-600 mb-4">Veuillez entrer le mot de passe.</p>
+            <input type="password" id="password-input" class="w-full p-2 border rounded-lg mb-2 text-center focus:ring-2 focus:ring-red-500 focus:outline-none transition-all">
+            <p id="password-error" class="text-red-500 text-sm h-4 mb-2"></p>
+            <div class="flex space-x-2">
+                <button id="cancel-password-btn" class="w-1/2 bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors">Annuler</button>
+                <button id="submit-password-btn" class="w-1/2 bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">Valider</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modale de confirmation pour la réinitialisation -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
+            <h2 id="confirm-title" class="text-xl font-bold mb-4"></h2>
+            <p id="confirm-content" class="text-gray-600 mb-4"></p>
+            <div class="flex space-x-4">
+                <button id="confirm-cancel-btn" class="w-1/2 bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition-colors">Annuler</button>
+                <button id="confirm-ok-btn" class="w-1/2 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors">Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour les messages (remplace les alertes) -->
+    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
+            <h2 id="message-title" class="text-xl font-bold mb-4"></h2>
+            <p id="message-content" class="text-gray-600 mb-4"></p>
+            <button id="message-close-btn" class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">OK</button>
+        </div>
+    </div>
+
+    <!-- Modale de recherche (masquée par défaut) -->
+    <div id="search-overlay" class="fixed inset-0 bg-white z-40 flex flex-col p-4">
+        <div class="flex items-center space-x-2 mb-4">
+            <button id="close-search-btn" class="text-gray-500 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" />
+                </svg>
+            </button>
+            <input type="search" id="global-search-input" placeholder="Rechercher prestataires ou intervenants..." class="flex-grow p-3 border-b-2 focus:border-orange-500 focus:outline-none text-lg">
+        </div>
+        <div id="search-results-container" class="flex-grow overflow-y-auto space-y-3">
+            <p class="text-center text-gray-500 mt-8">Commencez à taper pour rechercher.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- DONNÉES DE DÉMONSTRATION (état de l'application) ---
+        const appState = {
+            prestataires: [
+                { id: 'PREST01', nom: 'Dupont', prenom: 'Jean', entreprise: 'Tech Solutions', checkedIn: false },
+                { id: 'PREST02', nom: 'Martin', prenom: 'Marie', entreprise: 'Innovate SARL', checkedIn: true },
+                { id: 'PREST03', nom: 'Bernard', prenom: 'Luc', entreprise: 'Digital Services', checkedIn: false },
+            ],
+            intervenants: [
+                { id: 'INTER01', nom: 'Petit', prenom: 'Sophie', entreprise: 'Expert Conference', checkedIn: false },
+                { id: 'INTER02', nom: 'Robert', prenom: 'Paul', entreprise: 'Webinar Pro', checkedIn: true },
+            ],
+            // Ajout d'un tableau pour l'historique des check-ins validés
+            checkins: [],
+            currentPage: 'home-page'
+        };
+        
+        // Mot de passe d'administration (à changer dans un environnement de production)
+        const ADMIN_PASSWORD = 'DSR@2025';
+        const APP_VERSION = "1.0.0"; // Version de l'application
+
+        // --- SÉLECTION DES ÉLÉMENTS DU DOM ---
+        const dom = {
+            loader: document.getElementById('loader'),
+            appContent: document.getElementById('app-content'),
+            pages: document.querySelectorAll('main > div'),
+            navButtons: document.querySelectorAll('.nav-btn'),
+            menuItems: document.querySelectorAll('.menu-item'),
+            scanButton: document.getElementById('scan-button'),
+            pkpassModal: document.getElementById('pkpass-modal'),
+            closePkpassBtn: document.getElementById('close-pkpass-btn'),
+            searchPrestataires: document.getElementById('search-prestataires'),
+            searchIntervenants: document.getElementById('search-intervenants'),
+            adminBtn: document.getElementById('admin-btn'),
+            passwordModal: document.getElementById('password-modal'),
+            passwordInput: document.getElementById('password-input'),
+            passwordError: document.getElementById('password-error'),
+            cancelPasswordBtn: document.getElementById('cancel-password-btn'),
+            submitPasswordBtn: document.getElementById('submit-password-btn'),
+            messageModal: document.getElementById('message-modal'),
+            messageTitle: document.getElementById('message-title'),
+            messageContent: document.getElementById('message-content'),
+            messageCloseBtn: document.getElementById('message-close-btn'),
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmTitle: document.getElementById('confirm-title'),
+            confirmContent: document.getElementById('confirm-content'),
+            confirmOkBtn: document.getElementById('confirm-ok-btn'),
+            confirmCancelBtn: document.getElementById('confirm-cancel-btn'),
+            dataStats: {
+                totalScans: document.getElementById('total-scans-admin'),
+                prestatairesCheckedin: document.getElementById('prestataires-checkedin'),
+                prestatairesTotal: document.getElementById('prestataires-total'),
+                intervenantsCheckedin: document.getElementById('intervenants-checkedin'),
+                intervenantsTotal: document.getElementById('intervenants-total'),
+            },
+            resetDataBtn: document.getElementById('reset-data-btn'),
+            // Nouveaux éléments pour le menu et la recherche
+            hamburgerMenuBtn: document.getElementById('hamburger-menu-btn'),
+            sidebar: document.getElementById('sidebar'),
+            closeSidebarBtn: document.getElementById('close-sidebar-btn'),
+            navSidebarBtns: document.querySelectorAll('.nav-sidebar-btn'),
+            searchBtn: document.getElementById('search-btn'),
+            searchOverlay: document.getElementById('search-overlay'),
+            closeSearchBtn: document.getElementById('close-search-btn'),
+            globalSearchInput: document.getElementById('global-search-input'),
+            searchResultsContainer: document.getElementById('search-results-container'),
+            // Nouveaux éléments pour la page de check-in
+            checkinsList: document.getElementById('checkins-list'),
+            totalScansCounter: document.getElementById('total-scans'),
+            // Nouveaux éléments pour le menu hamburger
+            copyrightYear: document.getElementById('copyright-year'),
+            appVersion: document.getElementById('app-version'),
+            // Nouveaux éléments pour le formulaire d'ajout
+            addPersonForm: document.getElementById('add-person-form'),
+            typeSelect: document.getElementById('type-select'),
+            prenomInput: document.getElementById('prenom-input'),
+            nomInput: document.getElementById('nom-input'),
+            entrepriseInput: document.getElementById('entreprise-input')
+        };
+        
+        let html5QrCode;
+        let confirmAction = null;
+
+        // --- FONCTIONS DE L'APPLICATION ---
+        
+        /**
+         * Affiche une page et masque les autres.
+         * Gère les transitions de page et l'état du scanner.
+         * @param {string} pageId - L'identifiant de la page à afficher.
+         */
+        const showPage = (pageId) => {
+            appState.currentPage = pageId;
+            dom.pages.forEach(page => page.classList.add('hidden'));
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('page-transition');
+            }
+
+            // Gérer le scanner
+            if (pageId === 'scanner-page' && !html5QrCode) {
+                startScanner();
+            } else if (html5QrCode) {
+                stopScanner();
+            }
+            
+            // Mettre à jour la liste de check-in si on y navigue
+            if (pageId === 'checkin-page') {
+                renderCheckinList();
+            }
+
+            // Mettre à jour la navigation inférieure
+            dom.navButtons.forEach(btn => {
+                const isActive = btn.dataset.page === pageId;
+                btn.classList.toggle('text-emerald-500', isActive);
+                btn.classList.toggle('text-gray-500', !isActive);
+            });
+        };
+
+        /**
+         * Affiche une modale de message personnalisée.
+         * @param {string} title - Le titre du message.
+         * @param {string} content - Le contenu du message.
+         * @param {string} type - 'success' ou 'error'.
+         */
+        const showMessage = (title, content, type = 'success') => {
+            dom.messageTitle.textContent = title;
+            dom.messageContent.innerHTML = content;
+            dom.messageModal.style.display = 'flex';
+            dom.messageModal.classList.remove('modal-success', 'modal-error');
+            dom.messageModal.classList.add(`modal-${type}`);
+        };
+        
+        /**
+         * Affiche une modale de confirmation personnalisée.
+         * @param {string} title - Le titre du message.
+         * @param {string} content - Le contenu du message.
+         * @param {function} onConfirm - La fonction à exécuter si l'utilisateur confirme.
+         */
+        const showConfirm = (title, content, onConfirm) => {
+            dom.confirmTitle.textContent = title;
+            dom.confirmContent.innerHTML = content;
+            dom.confirmModal.style.display = 'flex';
+            confirmAction = onConfirm;
+        };
+        
+        /**
+         * Ouvre et ferme le menu latéral.
+         */
+        const toggleSidebar = () => {
+            dom.sidebar.classList.toggle('open');
+        };
+
+        /**
+         * Ouvre et ferme la modale de recherche.
+         */
+        const toggleSearchOverlay = (open) => {
+            if (open) {
+                dom.searchOverlay.classList.add('open');
+                dom.globalSearchInput.focus();
+            } else {
+                dom.searchOverlay.classList.remove('open');
+                dom.globalSearchInput.value = '';
+                dom.searchResultsContainer.innerHTML = `<p class="text-center text-gray-500 mt-8">Commencez à taper pour rechercher.</p>`;
+            }
+        };
+
+        /**
+         * Rend la liste des personnes dans le conteneur spécifié, en filtrant par un terme de recherche.
+         * @param {string} containerId - L'ID du conteneur où afficher la liste.
+         * @param {Array<Object>} data - Les données à afficher.
+         * @param {string} searchTerm - Le terme de recherche.
+         * @param {string} type - Le type de personne (ex: 'Prestataire' ou 'Intervenant').
+         */
+        const renderList = (containerId, data, searchTerm = '') => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            const filteredData = data.filter(p => 
+                `${p.prenom} ${p.nom} ${p.entreprise}`.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>`;
+                return;
+            }
+
+            filteredData.forEach(person => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all duration-150';
+                card.addEventListener('click', () => openPkpassModal(person.id));
+
+                card.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg">${person.prenom} ${person.nom}</p>
+                        <p class="text-sm text-gray-600">${person.entreprise}</p>
+                        <p class="text-xs font-mono bg-gray-200 inline-block px-2 py-1 rounded mt-1">${person.id}</p>
+                    </div>
+                    <div class="check-in-status text-right">
+                        <label class="flex items-center cursor-pointer" onclick="event.stopPropagation();">
+                            <input type="checkbox" ${person.checkedIn ? 'checked' : ''} class="form-checkbox h-5 w-5 text-green-500 rounded-full" onchange="window.toggleCheckIn('${person.id}')">
+                            <span class="ml-2 text-sm font-medium ${person.checkedIn ? 'text-green-600' : 'text-gray-500'}">${person.checkedIn ? 'Validé' : 'À valider'}</span>
+                        </label>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        };
+        
+        /**
+         * Rend la liste des check-ins sur la page "Check-in".
+         * Affiche uniquement les personnes validées.
+         */
+        const renderCheckinList = () => {
+            dom.checkinsList.innerHTML = '';
+            
+            const allValidatedPeople = [...appState.prestataires, ...appState.intervenants].filter(p => p.checkedIn);
+            dom.totalScansCounter.textContent = allValidatedPeople.length;
+
+            if (allValidatedPeople.length === 0) {
+                dom.checkinsList.innerHTML = `<p class="text-center text-gray-500 mt-4">Aucun check-in n'a encore été enregistré.</p>`;
+                return;
+            }
+
+            allValidatedPeople.forEach(person => {
+                const checkinCard = document.createElement('div');
+                checkinCard.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between';
+                // Ajout d'une date et d'une heure fictives pour le moment, car nous n'avons pas d'API pour le faire
+                const now = new Date();
+                const date = now.toLocaleDateString('fr-FR');
+                const time = now.toLocaleTimeString('fr-FR');
+
+                checkinCard.innerHTML = `
+                    <div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 19H11V17H13V19ZM13 15H11V7H13V15Z"/></svg>
+                            <span>${date}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 12H14V14H10V12Z"/></svg>
+                            <span>${time}</span>
+                        </div>
+                        <div class="font-bold text-gray-800">${person.prenom} ${person.nom}</div>
+                        <div class="text-sm text-gray-600">${person.entreprise}</div>
+                    </div>
+                `;
+                dom.checkinsList.appendChild(checkinCard);
+            });
+        };
+        
+        /**
+         * Rend les résultats de la recherche globale.
+         * @param {string} searchTerm - Le terme de recherche.
+         */
+        const renderSearchResults = (searchTerm) => {
+            const container = dom.searchResultsContainer;
+            container.innerHTML = '';
+            if (searchTerm.length < 2) {
+                container.innerHTML = `<p class="text-center text-gray-500 mt-8">Commencez à taper pour rechercher.</p>`;
+                return;
+            }
+            
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            const filteredResults = allPeople.filter(p => 
+                `${p.prenom} ${p.nom} ${p.entreprise}`.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filteredResults.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 mt-4">Aucun résultat trouvé pour "${searchTerm}".</p>`;
+                return;
+            }
+
+            filteredResults.forEach(person => {
+                const type = person.id.startsWith('PREST') ? 'Prestataire' : 'Intervenant';
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all duration-150';
+                card.addEventListener('click', () => {
+                    toggleSearchOverlay(false);
+                    openPkpassModal(person.id);
+                });
+                
+                card.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg">${person.prenom} ${person.nom}</p>
+                        <p class="text-sm text-gray-600">${person.entreprise}</p>
+                        <p class="text-xs font-mono bg-gray-200 inline-block px-2 py-1 rounded mt-1">${person.id}</p>
+                    </div>
+                    <div class="check-in-status text-right">
+                        <label class="flex items-center cursor-pointer" onclick="event.stopPropagation();">
+                            <input type="checkbox" ${person.checkedIn ? 'checked' : ''} class="form-checkbox h-5 w-5 text-green-500 rounded-full" onchange="window.toggleCheckIn('${person.id}')">
+                            <span class="ml-2 text-sm font-medium ${person.checkedIn ? 'text-green-600' : 'text-gray-500'}">${person.checkedIn ? 'Validé' : 'À valider'}</span>
+                        </label>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        };
+        
+        /**
+         * Met à jour l'état de check-in d'une personne et rafraîchit les listes.
+         * @param {string} personId - L'ID de la personne à mettre à jour.
+         */
+        window.toggleCheckIn = (personId) => {
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            const person = allPeople.find(p => p.id === personId);
+            if (person) {
+                person.checkedIn = !person.checkedIn;
+                renderAllLists();
+                updateAdminStats();
+                const currentSearchTerm = dom.globalSearchInput.value;
+                if (currentSearchTerm) {
+                    renderSearchResults(currentSearchTerm);
+                }
+            }
+        };
+
+        /**
+         * Ouvre la modale pkpass pour une personne spécifique.
+         * @param {string} personId - L'ID de la personne.
+         */
+        const openPkpassModal = (personId) => {
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            const person = allPeople.find(p => p.id === personId);
+            if (person) {
+                document.getElementById('pkpass-type').textContent = person.id.startsWith('PREST') ? 'Prestataire' : 'Intervenant';
+                document.getElementById('pkpass-name').textContent = `${person.prenom} ${person.nom}`;
+                document.getElementById('pkpass-company').textContent = person.entreprise;
+                document.getElementById('pkpass-id').textContent = person.id;
+
+                const canvas = document.createElement('canvas');
+                JsBarcode(canvas, `${person.id}`, {
+                    format: "CODE128",
+                    lineColor: "#000",
+                    width: 2.5,
+                    height: 80,
+                    displayValue: false
+                });
+                document.getElementById('pkpass-barcode-img').src = canvas.toDataURL("image/png");
+                
+                dom.pkpassModal.style.display = 'flex';
+            }
+        };
+
+        /**
+         * Démarre le scanner de QR Code.
+         */
+        const startScanner = () => {
+            document.getElementById('scan-result').innerHTML = '';
+            html5QrCode = new Html5Qrcode("qr-reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, (errorMessage) => {
+                // Ignorez les erreurs de scan pour ne pas surcharger la console
+            });
+        };
+        
+        /**
+         * Arrête le scanner de QR Code.
+         */
+        const stopScanner = () => {
+            if(html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => { html5QrCode = null; });
+            }
+        };
+
+        /**
+         * Fonction de rappel en cas de succès du scan.
+         * @param {string} decodedText - Le texte décodé à partir du QR code.
+         */
+        const onScanSuccess = (decodedText) => {
+            const resultDiv = document.getElementById('scan-result');
+            const scannedId = decodedText.split('\n')[0].trim();
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            const person = allPeople.find(p => p.id.trim() === scannedId);
+
+            if (person) {
+                if (person.checkedIn) {
+                    resultDiv.innerHTML = `<p class="text-yellow-600 font-bold">Déjà validé !</p><p class="text-sm">Le check-in pour ${person.prenom} ${person.nom} a déjà été effectué.</p>`;
+                } else {
+                    person.checkedIn = true;
+                    resultDiv.innerHTML = `<p class="text-green-600 font-bold">Succès !</p><p class="text-sm">Check-in validé pour ${person.prenom} ${person.nom}.</p>`;
+                    renderAllLists();
+                    updateAdminStats();
+                }
+            } else {
+                resultDiv.innerHTML = `<p class="text-red-600 font-bold">Erreur !</p><p class="text-sm">Code inconnu : ${scannedId}</p>`;
+            }
+            stopScanner();
+            setTimeout(() => showPage('home-page'), 2000);
+        };
+
+        /**
+         * Rend toutes les listes de personnes.
+         */
+        const renderAllLists = () => {
+            renderList('prestataires-list', appState.prestataires, dom.searchPrestataires.value);
+            renderList('intervenants-list', appState.intervenants, dom.searchIntervenants.value);
+            renderCheckinList(); // Mettre à jour la liste de check-in également
+        };
+        
+        /**
+         * Met à jour les statistiques de l'administration.
+         */
+        const updateAdminStats = () => {
+            const prestatairesCheckedIn = appState.prestataires.filter(p => p.checkedIn).length;
+            const intervenantsCheckedIn = appState.intervenants.filter(p => p.checkedIn).length;
+            
+            dom.dataStats.totalScans.textContent = prestatairesCheckedIn + intervenantsCheckedIn;
+            dom.dataStats.prestatairesCheckedin.textContent = prestatairesCheckedIn;
+            dom.dataStats.prestatairesTotal.textContent = appState.prestataires.length;
+            dom.dataStats.intervenantsCheckedin.textContent = intervenantsCheckedIn;
+            dom.dataStats.intervenantsTotal.textContent = appState.intervenants.length;
+        };
+
+        /**
+         * Génère un nouvel ID unique basé sur le type.
+         * @param {string} type - 'prestataire' ou 'intervenant'.
+         * @returns {string} L'ID généré.
+         */
+        const generateNewId = (type) => {
+            const prefix = type === 'prestataire' ? 'PREST' : 'INTER';
+            const allData = type === 'prestataire' ? appState.prestataires : appState.intervenants;
+            let lastNumber = 0;
+            allData.forEach(p => {
+                const num = parseInt(p.id.replace(prefix, ''), 10);
+                if (num > lastNumber) {
+                    lastNumber = num;
+                }
+            });
+            const newNumber = lastNumber + 1;
+            return `${prefix}${String(newNumber).padStart(2, '0')}`;
+        };
+
+        /**
+         * Vérifie si une personne avec les mêmes informations existe déjà.
+         * @param {string} prenom - Le prénom à vérifier.
+         * @param {string} nom - Le nom à vérifier.
+         * @param {string} entreprise - L'entreprise à vérifier.
+         * @returns {boolean} Vrai si un doublon est trouvé, sinon Faux.
+         */
+        const isDuplicate = (prenom, nom, entreprise) => {
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            return allPeople.some(p => 
+                p.prenom.toLowerCase() === prenom.toLowerCase() &&
+                p.nom.toLowerCase() === nom.toLowerCase() &&
+                p.entreprise.toLowerCase() === entreprise.toLowerCase()
+            );
+        };
+
+        // --- GESTION DES ÉVÉNEMENTS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Affichage du contenu après un délai pour le loader
+            setTimeout(() => {
+                dom.loader.style.opacity = '0';
+                dom.loader.addEventListener('transitionend', () => {
+                    dom.loader.style.display = 'none';
+                    dom.appContent.classList.remove('hidden');
+                }, { once: true });
+            }, 1500);
+
+            // Met à jour l'année et la version dans le menu hamburger
+            dom.copyrightYear.textContent = new Date().getFullYear();
+            dom.appVersion.textContent = APP_VERSION;
+
+            // Gestionnaire pour la navigation
+            dom.navButtons.forEach(button => button.addEventListener('click', () => showPage(button.dataset.page)));
+            dom.menuItems.forEach(item => {
+                if(item.dataset.page) {
+                    item.addEventListener('click', () => showPage(item.dataset.page));
+                }
+            });
+            dom.navSidebarBtns.forEach(button => button.addEventListener('click', () => {
+                showPage(button.dataset.page);
+                toggleSidebar();
+            }));
+            dom.scanButton.addEventListener('click', () => showPage('scanner-page'));
+
+            // Gestion des boutons du menu latéral
+            dom.hamburgerMenuBtn.addEventListener('click', toggleSidebar);
+            dom.closeSidebarBtn.addEventListener('click', toggleSidebar);
+            
+            // Gestion des boutons de recherche
+            dom.searchBtn.addEventListener('click', () => toggleSearchOverlay(true));
+            dom.closeSearchBtn.addEventListener('click', () => toggleSearchOverlay(false));
+            
+            // Écouteur pour la recherche globale
+            dom.globalSearchInput.addEventListener('input', (e) => {
+                renderSearchResults(e.target.value.trim());
+            });
+
+            // Gestion de la modale pkpass
+            dom.closePkpassBtn.addEventListener('click', () => {
+                dom.pkpassModal.style.display = 'none';
+            });
+            
+            // Gestion de la modale de message
+            dom.messageCloseBtn.addEventListener('click', () => {
+                dom.messageModal.style.display = 'none';
+            });
+            
+            // Gestion de la modale de confirmation
+            dom.confirmOkBtn.addEventListener('click', () => {
+                dom.confirmModal.style.display = 'none';
+                if (confirmAction) {
+                    confirmAction();
+                    confirmAction = null;
+                }
+            });
+            dom.confirmCancelBtn.addEventListener('click', () => {
+                dom.confirmModal.style.display = 'none';
+                confirmAction = null;
+            });
+            
+            // Gestion de la modale du mot de passe admin
+            dom.adminBtn.addEventListener('click', () => {
+                dom.passwordInput.value = '';
+                dom.passwordError.textContent = '';
+                dom.passwordModal.style.display = 'flex';
+                dom.passwordInput.focus();
+            });
+            dom.cancelPasswordBtn.addEventListener('click', () => {
+                dom.passwordModal.style.display = 'none';
+            });
+            dom.submitPasswordBtn.addEventListener('click', () => {
+                if (dom.passwordInput.value === ADMIN_PASSWORD) {
+                    dom.passwordModal.style.display = 'none';
+                    showPage('admin-page');
+                } else {
+                    dom.passwordError.textContent = 'Mot de passe incorrect.';
+                    dom.passwordInput.value = '';
+                    dom.passwordInput.focus();
+                }
+            });
+            dom.passwordInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    dom.submitPasswordBtn.click();
+                }
+            });
+
+            // Gestion du bouton de réinitialisation des données d'admin
+            dom.resetDataBtn.addEventListener('click', () => {
+                 showConfirm(
+                    'Réinitialisation des données',
+                    'Êtes-vous sûr de vouloir réinitialiser toutes les données de check-in ? Cette action est irréversible.',
+                    () => {
+                        appState.prestataires.forEach(p => p.checkedIn = false);
+                        appState.intervenants.forEach(p => p.checkedIn = false);
+                        renderAllLists();
+                        updateAdminStats();
+                        showMessage('Données réinitialisées', 'Toutes les données de check-in ont été réinitialisées avec succès.');
+                    }
+                );
+            });
+            
+            // Gestion de la soumission du formulaire d'ajout de personne
+            dom.addPersonForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const type = dom.typeSelect.value;
+                const prenom = dom.prenomInput.value.trim();
+                const nom = dom.nomInput.value.trim();
+                const entreprise = dom.entrepriseInput.value.trim();
+                
+                if (prenom && nom && entreprise) {
+                    if (isDuplicate(prenom, nom, entreprise)) {
+                        showMessage('Erreur', 'Cette personne semble déjà exister dans la base de données.', 'error');
+                        return;
+                    }
+
+                    const newPerson = {
+                        id: generateNewId(type),
+                        prenom: prenom,
+                        nom: nom,
+                        entreprise: entreprise,
+                        checkedIn: false
+                    };
+                    
+                    if (type === 'prestataire') {
+                        appState.prestataires.push(newPerson);
+                    } else {
+                        appState.intervenants.push(newPerson);
+                    }
+                    
+                    // Réinitialiser le formulaire
+                    dom.addPersonForm.reset();
+                    
+                    // Mettre à jour les listes et les stats
+                    renderAllLists();
+                    updateAdminStats();
+                    
+                    showMessage('Succès', `Le nouvel(le) ${type} a été ajouté(e) avec succès. Son code est : <span class="font-bold text-lg">${newPerson.id}</span>`);
+                } else {
+                    showMessage('Erreur', 'Veuillez remplir tous les champs.', 'error');
+                }
+            });
+
+            // Gestion des barres de recherche
+            dom.searchPrestataires.addEventListener('input', (e) => renderList('prestataires-list', appState.prestataires, e.target.value));
+            dom.searchIntervenants.addEventListener('input', (e) => renderList('intervenants-list', appState.intervenants, e.target.value));
+
+            // Initialisation de l'application
+            renderAllLists();
+            updateAdminStats();
+            showPage('home-page');
+            
+            // Enregistrement du service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('sw.js')
+                        .then(reg => console.log('ServiceWorker enregistré.', reg))
+                        .catch(err => console.log('Échec de l\'enregistrement du ServiceWorker : ', err));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
