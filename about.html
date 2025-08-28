@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSR PROS 2025 - À propos</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Styles CSS extraits du fichier DSRPROS2025.htm */
+        body { font-family: 'Inter', sans-serif; scrollbar-width: none; -ms-overflow-style: none; }
+        body::-webkit-scrollbar { display: none; }
+        .page-transition { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans h-screen overflow-hidden flex flex-col">
+
+    <header class="bg-gray-800 text-white p-4 flex items-center justify-between shadow-lg sticky top-0 z-20">
+        <div class="flex items-center space-x-2">
+            <a href="index.html">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" />
+                </svg>
+            </a>
+            <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-8">
+        </div>
+        <h1 class="text-xl font-bold">À propos</h1>
+    </header>
+
+    <main id="app-content" class="flex-grow overflow-y-auto pb-20 page-transition">
+        <div class="p-4">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">À propos de DSR PROS 2025</h1>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-2">Application de gestion d'événements</h2>
+                <p class="text-gray-600 mb-4">
+                    Cette application PWA (Progressive Web App) a été développée spécifiquement pour la gestion des prestataires et intervenants de l'événement DSR PROS 2025. Elle permet un suivi en temps réel des validations et facilite l'accès aux informations des participants.
+                </p>
+                
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong class="font-bold">Développeur :</strong> Votre nom / Nom de l'équipe</li>
+                    <li><strong class="font-bold">Version :</strong> 1.0.0</li>
+                    <li><strong class="font-bold">Date de création :</strong> Août 2025</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-2">Fonctionnalités clés</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Gestion et recherche des prestataires et intervenants.</li>
+                    <li>Validation des billets via un scanner de codes-barres.</li>
+                    <li>Exportation des informations en format PNG et CSV.</li>
+                    <li>Interface d'administration pour l'ajout de nouveaux participants.</li>
+                    <li>Fonctionne hors ligne grâce à la technologie PWA.</li>
+                </ul>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">© 2025 - DSR PROS. Tous droits réservés.</p>
+            </div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg flex justify-around p-2 border-t border-gray-200 z-30">
+        <a href="prestataires.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
+            </svg>
+            <span class="text-xs">Prestataires</span>
+        </a>
+        <a href="scanner.html" id="scan-button" class="scan-button bg-orange-500 text-white rounded-full w-16 h-16 flex items-center justify-center -mt-8 shadow-xl border-4 border-white z-40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 6H14V8H10V6ZM10 10H14V14H10V10ZM10 16H14V18H10V16Z" />
+            </svg>
+        </a>
+        <a href="intervenants.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
+            </svg>
+            <span class="text-xs">Intervenants</span>
+        </a>
+    </nav>
+    
+</body>
+</html>
