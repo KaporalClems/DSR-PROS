@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSR PROS 2025 - Connexion</title>
     
-    <!-- Thème de couleur pour PWA -->
-    <meta name="theme-color" content="#10B981"/> 
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png">
-    
+    <!-- Scripts et polices externes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,27 +43,32 @@
     </div>
 
     <script type="module">
+        // Importation des modules Firebase nécessaires
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
         
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "YOUR_API_KEY", // Remplacez par votre clé API
-            authDomain: "YOUR_AUTH_DOMAIN", // Remplacez par votre domaine d'authentification
-            projectId: "YOUR_PROJECT_ID", // Remplacez par votre ID de projet
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
-        };
-    
+        // Initialisation de Firebase avec la configuration fournie par l'environnement
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         
+        // Connexion avec le token personnalisé de l'environnement, si disponible
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken).then(() => {
+                console.log("Connexion avec le token personnalisé réussie !");
+            }).catch((error) => {
+                console.error("Échec de la connexion avec le token personnalisé:", error);
+            });
+        }
+        
+        // Sélection des éléments du DOM
         const loginForm = document.getElementById('login-form');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const errorMessageDiv = document.getElementById('error-message');
 
+        // Gestion de la soumission du formulaire de connexion
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMessageDiv.classList.add('hidden');
