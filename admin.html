@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSR PROS 2025 - Admin</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        /* Styles CSS extraits du fichier DSRPROS2025.htm */
+        body { font-family: 'Inter', sans-serif; scrollbar-width: none; -ms-overflow-style: none; }
+        body::-webkit-scrollbar { display: none; }
+        .pkpass-card {
+            position: relative; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease-in-out;
+        }
+        .pkpass-card:hover { transform: scale(1.02); }
+        .pkpass-card::before, .pkpass-card::after {
+            content: ''; position: absolute; top: 50%; width: 30px; height: 30px; background: #f3f4f6; border-radius: 50%;
+        }
+        .pkpass-card::before { left: -15px; transform: translateY(-50%); }
+        .pkpass-card::after { right: -15px; transform: translateY(-50%); }
+        .pkpass-footer { height: 10px; width: 100%; }
+        .pkpass-footer.prestataire { background-color: #10B981; }
+        .pkpass-footer.intervenant { background-color: #3B82F6; }
+        .page-transition { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans h-screen overflow-hidden flex flex-col">
+
+    <header class="bg-gray-800 text-white p-4 flex items-center justify-between shadow-lg sticky top-0 z-20">
+        <div class="flex items-center space-x-2">
+            <a href="index.html">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" />
+                </svg>
+            </a>
+            <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-8">
+        </div>
+        <h1 class="text-xl font-bold">Admin</h1>
+    </header>
+
+    <main id="app-content" class="flex-grow overflow-y-auto pb-20 page-transition">
+        <div class="p-4">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Panneau d'administration</h1>
+
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Ajouter un participant</h2>
+                <form id="add-form" class="space-y-4">
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700">Type de participant</label>
+                        <select id="type" name="type" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                            <option value="prestataire">Prestataire</option>
+                            <option value="intervenant">Intervenant</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <input type="text" id="nom" name="nom" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="entreprise" class="block text-sm font-medium text-gray-700">Entreprise</label>
+                        <input type="text" id="entreprise" name="entreprise" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-md font-semibold hover:bg-blue-600 transition-colors">
+                        Ajouter
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Actions de gestion</h2>
+                <div class="space-y-4">
+                    <button id="reset-checkins-btn" class="w-full bg-red-500 text-white p-3 rounded-md font-semibold hover:bg-red-600 transition-colors">
+                        Réinitialiser toutes les validations
+                    </button>
+                    <button id="export-list-btn" class="w-full bg-gray-500 text-white p-3 rounded-md font-semibold hover:bg-gray-600 transition-colors">
+                        Exporter la liste en CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg flex justify-around p-2 border-t border-gray-200 z-30">
+        <a href="prestataires.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
+            </svg>
+            <span class="text-xs">Prestataires</span>
+        </a>
+        <a href="scanner.html" id="scan-button" class="scan-button bg-orange-500 text-white rounded-full w-16 h-16 flex items-center justify-center -mt-8 shadow-xl border-4 border-white z-40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 6H14V8H10V6ZM10 10H14V14H10V10ZM10 16H14V18H10V16Z" />
+            </svg>
+        </a>
+        <a href="intervenants.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
+            </svg>
+            <span class="text-xs">Intervenants</span>
+        </a>
+    </nav>
+    
+    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
+            <h2 id="message-title" class="text-xl font-bold mb-4"></h2>
+            <p id="message-content" class="text-gray-600 mb-4"></p>
+            <button id="message-close-btn" class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DONNÉES DE DÉMONSTRATION (état de l'application) ---
+        const appState = {
+            prestataires: [
+                { id: 'PREST01', nom: 'Dupont', prenom: 'Jean', entreprise: 'Tech Solutions', checkedIn: false },
+                { id: 'PREST02', nom: 'Martin', prenom: 'Marie', entreprise: 'Innovate SARL', checkedIn: true },
+                { id: 'PREST03', nom: 'Bernard', prenom: 'Luc', entreprise: 'Digital Services', checkedIn: false },
+            ],
+            intervenants: [
+                { id: 'INTER01', nom: 'Petit', prenom: 'Sophie', entreprise: 'Expert Conference', checkedIn: false },
+                { id: 'INTER02', nom: 'Robert', prenom: 'Paul', entreprise: 'Webinar Pro', checkedIn: true },
+            ]
+        };
+
+        // --- SÉLECTION DES ÉLÉMENTS DU DOM ---
+        const dom = {
+            addForm: document.getElementById('add-form'),
+            resetCheckinsBtn: document.getElementById('reset-checkins-btn'),
+            exportListBtn: document.getElementById('export-list-btn'),
+            messageModal: document.getElementById('message-modal'),
+            messageTitle: document.getElementById('message-title'),
+            messageContent: document.getElementById('message-content'),
+            messageCloseBtn: document.getElementById('message-close-btn')
+        };
+        
+        /**
+         * Affiche une modale de message personnalisée.
+         */
+        const showMessage = (title, content, type = 'success') => {
+            dom.messageTitle.textContent = title;
+            dom.messageContent.innerHTML = content;
+            dom.messageModal.style.display = 'flex';
+        };
+
+        /**
+         * Gère l'ajout d'un nouveau participant.
+         */
+        const handleAddParticipant = (event) => {
+            event.preventDefault();
+            const formData = new FormData(dom.addForm);
+            const type = formData.get('type');
+            const nom = formData.get('nom');
+            const prenom = formData.get('prenom');
+            const entreprise = formData.get('entreprise');
+            
+            if (nom && prenom && entreprise) {
+                const prefix = type === 'prestataire' ? 'PREST' : 'INTER';
+                const count = (type === 'prestataire' ? appState.prestataires.length : appState.intervenants.length) + 1;
+                const newId = `${prefix}${String(count).padStart(2, '0')}`;
+                
+                const newPerson = {
+                    id: newId,
+                    nom,
+                    prenom,
+                    entreprise,
+                    checkedIn: false
+                };
+                
+                if (type === 'prestataire') {
+                    appState.prestataires.push(newPerson);
+                } else {
+                    appState.intervenants.push(newPerson);
+                }
+                
+                dom.addForm.reset();
+                showMessage('Succès', `Le nouvel(le) ${type} a été ajouté(e) avec succès. Son code est : <span class="font-bold text-lg">${newId}</span>`);
+            } else {
+                showMessage('Erreur', 'Veuillez remplir tous les champs.', 'error');
+            }
+        };
+
+        /**
+         * Réinitialise l'état de check-in de tous les participants.
+         */
+        const handleResetCheckins = () => {
+            const confirmReset = confirm("Êtes-vous sûr de vouloir réinitialiser toutes les validations ? Cette action est irréversible.");
+            if (confirmReset) {
+                appState.prestataires.forEach(p => p.checkedIn = false);
+                appState.intervenants.forEach(p => p.checkedIn = false);
+                showMessage('Réinitialisation réussie', 'Toutes les validations ont été réinitialisées.');
+            }
+        };
+
+        /**
+         * Exporte les listes en un fichier CSV.
+         */
+        const handleExportList = () => {
+            const allPeople = [...appState.prestataires, ...appState.intervenants];
+            
+            const header = "ID;Nom;Prénom;Entreprise;Type;Validé\n";
+            const rows = allPeople.map(p => {
+                const type = p.id.startsWith('PREST') ? 'Prestataire' : 'Intervenant';
+                const checkedInStatus = p.checkedIn ? 'Oui' : 'Non';
+                return `${p.id};${p.nom};${p.prenom};${p.entreprise};${type};${checkedInStatus}`;
+            }).join('\n');
+            
+            const csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(header + rows);
+            const link = document.createElement('a');
+            link.setAttribute("href", csvContent);
+            link.setAttribute("download", "liste-participants-DSRPROS2025.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('Exportation réussie', 'La liste des participants a été exportée en CSV.');
+        };
+
+        // --- GESTION DES ÉVÉNEMENTS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            dom.addForm.addEventListener('submit', handleAddParticipant);
+            dom.resetCheckinsBtn.addEventListener('click', handleResetCheckins);
+            dom.exportList
