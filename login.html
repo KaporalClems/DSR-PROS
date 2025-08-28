@@ -46,12 +46,14 @@
         // Importation des modules Firebase nécessaires
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
         
         // Initialisation de Firebase avec la configuration fournie par l'environnement
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
+        const db = getFirestore(app);
+
         // Connexion avec le token personnalisé de l'environnement, si disponible
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         if (initialAuthToken) {
@@ -104,4 +106,3 @@
     </script>
 </body>
 </html>
-
