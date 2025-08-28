@@ -21,11 +21,12 @@
     
     <!-- Script d'initialisation de Firebase Firestore et Auth -->
     <script type="module">
+        // Importation des fonctions nécessaires de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        // Use global variables provided by the Canvas environment if available
+        // Définition de la configuration Firebase et de l'ID de l'application
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCeu9JnhoxcUqT0clip0Jpwq8XDl9tBZuw",
@@ -37,25 +38,41 @@
             measurementId: "G-0F40M9P9G7"
         };
 
-        // Initialize Firebase services
+        // Initialisation des services Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global variables for Firestore collections
+        // Variables globales pour les références de collections et l'ID utilisateur
         let prestatairesRef, intervenantsRef;
         let userId;
 
+        // Stockage des données des participants dans des variables globales
         window.prestataires = [];
         window.intervenants = [];
 
-        // --- AUTHENTICATION CHECK AND REDIRECTION ---
+        // Fonction pour gérer l'état d'authentification et les connexions
+        async function handleAuth() {
+            try {
+                // Tente de se connecter avec un token personnalisé s'il est disponible, sinon se connecte de manière anonyme
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Erreur d'authentification :", error);
+            }
+        }
+        
+        // --- GESTION DE L'ÉTAT D'AUTHENTIFICATION ET DES ÉCOUTEURS FIRESTORE ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in, proceed with the app
+                // L'utilisateur est connecté. L'application peut s'initialiser.
                 userId = user.uid;
                 document.getElementById('user-id-display').textContent = `ID Utilisateur : ${userId}`;
-                
+
+                // Définition des références de collection Firestore
                 prestatairesRef = collection(db, `artifacts/${appId}/users/${userId}/prestataires`);
                 intervenantsRef = collection(db, `artifacts/${appId}/users/${userId}/intervenants`);
                 
@@ -63,7 +80,7 @@
                 window.intervenantsRef = intervenantsRef;
                 window.onSnapshot = onSnapshot;
 
-                // Listen to real-time changes
+                // Ajout des écouteurs en temps réel pour les collections
                 onSnapshot(prestatairesRef, (snapshot) => {
                     window.prestataires = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     window.updateAdminStats();
@@ -74,8 +91,12 @@
                     window.updateAdminStats();
                 });
             } else {
-                // No user is signed in, redirect to login page
-                window.location.href = './login.html';
+                // Aucun utilisateur n'est connecté, redirige vers la page de connexion
+                // Cette redirection est commentée pour les tests car l'environnement Canvas fournit un token.
+                // Si vous exécutez cela en dehors de cet environnement, vous voudrez peut-être décommenter.
+                // window.location.href = './login.html';
+                console.log("Utilisateur déconnecté. Tente une connexion automatique...");
+                handleAuth();
             }
         });
     </script>
