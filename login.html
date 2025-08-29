@@ -42,27 +42,10 @@
     </div>
 
     <script type="module">
-        // Importation des fonctions nécessaires
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        // Import Firebase services from your centralized file
+        import { auth } from './firebase-init.js';
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         
-        // Configuration de Firebase pour votre projet DSR PROS
-        const firebaseConfig = {
-          apiKey: "AIzaSyAJVt4zqIUXp0oTzkTaXlHhgGUuoj9d618",
-          authDomain: "dsr-pros-9f349.firebaseapp.com",
-          projectId: "dsr-pros-9f349",
-          storageBucket: "dsr-pros-9f349.firebasestorage.app",
-          messagingSenderId: "290416195988",
-          appId: "1:290416195988:web:32161b91ea9f41804cb781",
-          measurementId: "G-X9K4E468TS"
-        };
-        
-        // Initialisation de l'application et des services
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
         // Sélection des éléments du DOM
         const loginForm = document.getElementById('login-form');
         const emailInput = document.getElementById('email');
@@ -78,13 +61,11 @@
             const password = passwordInput.value;
 
             try {
-                // Tente de se connecter
                 await signInWithEmailAndPassword(auth, email, password);
                 
-                // Si la connexion réussit, la redirection est gérée par le script de index.html
-                // qui détecte l'état d'authentification.
+                // Redirection will be handled by the onAuthStateChanged listener in index.html
+                // It's a cleaner approach
             } catch (error) {
-                // Gère les erreurs de connexion et affiche un message à l'utilisateur
                 let message = "Une erreur est survenue. Veuillez réessayer.";
                 switch(error.code) {
                     case 'auth/invalid-email':
