@@ -41,6 +41,46 @@
             color: #2563EB;
             border-top: 2px solid #2563EB;
         }
+        /* Style pour les cartes de la liste */
+        .list-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1rem;
+        }
+        .pass-card {
+            border-radius: 1.5rem;
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        .pass-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .pass-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .dotted-line {
+            border-top: 2px dashed rgba(255,255,255,0.3);
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -185,7 +225,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Modale de ticket PKPASS -->
+    <div id="ticket-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 shadow-xl w-full max-w-sm">
+            <!-- Contenu de la carte de pass -->
+            <div class="pass-card">
+                <div class="flex items-center">
+                    <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo" class="h-10 w-10 mr-4 rounded-full bg-white p-1">
+                    <h2 class="text-lg font-bold">PASS DSR PROS</h2>
+                </div>
+                <div class="dotted-line"></div>
+                <div class="flex justify-between items-center text-sm font-light mb-4">
+                    <div>
+                        <p class="opacity-80">NOM</p>
+                        <p id="pass-nom" class="font-semibold text-lg uppercase"></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="opacity-80">ENTREPRISE</p>
+                        <p id="pass-entreprise" class="font-semibold text-lg"></p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-sm font-light mb-4">
+                    <div>
+                        <p class="opacity-80">STATUT</p>
+                        <p id="pass-statut" class="font-semibold text-lg"></p>
+                    </div>
+                     <div class="text-right">
+                        <p class="opacity-80">ID</p>
+                        <p id="pass-id" class="font-semibold text-lg"></p>
+                    </div>
+                </div>
+                <!-- QR Code sur le ticket -->
+                <div class="flex justify-center mt-6">
+                    <div id="pass-qrcode" class="bg-white p-2 rounded-lg"></div>
+                </div>
+            </div>
+            
+            <button id="close-ticket-btn" class="w-full mt-4 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
+                Fermer
+            </button>
+        </div>
+    </div>
     
+    <!-- Script pour la génération des QR codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <!-- Script principal -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -219,6 +304,15 @@
             modalMessage: document.getElementById('modal-message'),
             modalCloseBtn: document.getElementById('modal-close-btn'),
             userInfo: document.getElementById('user-info'),
+            // Nouveaux éléments pour la modale de ticket
+            ticketModal: document.getElementById('ticket-modal'),
+            closeTicketBtn: document.getElementById('close-ticket-btn'),
+            passNom: document.getElementById('pass-nom'),
+            passEntreprise: document.getElementById('pass-entreprise'),
+            passStatut: document.getElementById('pass-statut'),
+            passId: document.getElementById('pass-id'),
+            passQrcode: document.getElementById('pass-qrcode'),
+            passCard: document.querySelector('#ticket-modal .pass-card')
         };
 
         // Simuler le chargement et afficher la page de connexion
@@ -363,26 +457,63 @@
         // Fonction pour générer le HTML de la liste
         function renderList(data, container, tableName) {
             let html = '<div class="space-y-3">';
-            data.forEach(item => {
+            const tablePrefix = tableName.toUpperCase().slice(0, 5); // Ex: PREST or INTER
+            data.forEach((item, index) => {
+                const itemID = `${tablePrefix}${String(index + 1).padStart(2, '0')}`;
+                // J'ajoute un écouteur de clic sur toute la carte pour afficher le ticket
                 html += `
-                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
-                        <div>
+                    <div class="bg-white p-4 rounded-xl shadow-md list-item cursor-pointer" data-id="${item.id}" data-table="${tableName}">
+                        <!-- QR Code -->
+                        <div id="qrcode-${item.id}" class="w-20 h-20"></div>
+                        
+                        <!-- Informations -->
+                        <div class="flex-1">
                             <p class="font-bold text-gray-800">${item.prenom || ''} ${item.nom || ''}</p>
                             <p class="text-sm text-gray-600">${item.entreprise || 'N/A'}</p>
                             <p class="text-xs text-gray-400 mt-1">ID: ${item.barcode || item.id}</p>
                         </div>
-                        <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}">
-                            ${item.checked_in ? 'Validé' : 'Valider'}
-                        </button>
+
+                        <!-- Statut et bouton de validation -->
+                        <div class="flex flex-col items-end">
+                             <span class="text-sm font-semibold text-gray-500 mb-2">${itemID}</span>
+                             <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}" onclick="event.stopPropagation();">
+                                ${item.checked_in ? 'Validé' : 'Valider'}
+                            </button>
+                        </div>
                     </div>
                 `;
             });
             html += '</div>';
             container.innerHTML = html;
 
+            // Générer les QR codes une fois que le HTML est dans le DOM
+            data.forEach(item => {
+                const qrcodeContainer = document.getElementById(`qrcode-${item.id}`);
+                if (qrcodeContainer && item.barcode) {
+                     new QRCode(qrcodeContainer, {
+                        text: item.barcode,
+                        width: 80,
+                        height: 80,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                }
+            });
+
             // Ajouter les écouteurs pour les boutons de check-in
             container.querySelectorAll('.check-in-btn').forEach(button => {
-                button.addEventListener('click', () => toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName));
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName);
+                });
+            });
+
+            // Ajouter les écouteurs pour afficher le ticket
+            container.querySelectorAll('.list-item').forEach(card => {
+                card.addEventListener('click', () => {
+                    showTicketModal(card.dataset.id, card.dataset.table);
+                });
             });
         }
 
@@ -402,6 +533,57 @@
                 showModal('Erreur', "Une erreur est survenue lors de la mise à jour.", true);
             }
         }
+
+        // Fonction pour afficher la modale de ticket
+        async function showTicketModal(id, tableName) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                // Changer la couleur du pass en fonction du type de personne
+                if (tableName === 'prestataires') {
+                    elements.passCard.style.background = 'linear-gradient(135deg, #2e8637, #34983f)';
+                } else if (tableName === 'intervenants') {
+                    elements.passCard.style.background = 'linear-gradient(135deg, #003680, #004aad)';
+                }
+                
+                // Mettre à jour le contenu de la modale
+                elements.passNom.textContent = `${data.prenom || ''} ${data.nom || ''}`;
+                elements.passEntreprise.textContent = data.entreprise || 'N/A';
+                elements.passStatut.textContent = data.checked_in ? 'Validé' : 'En attente';
+                elements.passStatut.classList.remove('text-green-500', 'text-yellow-500');
+                elements.passStatut.classList.add(data.checked_in ? 'text-green-500' : 'text-yellow-500');
+                elements.passId.textContent = data.barcode || data.id;
+
+                // Vider et générer le nouveau QR code
+                elements.passQrcode.innerHTML = '';
+                new QRCode(elements.passQrcode, {
+                    text: data.barcode || data.id,
+                    width: 128,
+                    height: 128,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+
+                // Afficher la modale
+                elements.ticketModal.classList.remove('hidden');
+
+            } catch(error) {
+                console.error('Erreur lors du chargement des données du ticket:', error);
+                showModal('Erreur', "Impossible de charger les données du ticket.", true);
+            }
+        }
+
+        // Gérer la fermeture de la modale de ticket
+        elements.closeTicketBtn.addEventListener('click', () => {
+            elements.ticketModal.classList.add('hidden');
+        });
         
         // Inscription du Service Worker pour la PWA
         // Note: Le fichier sw.js et manifest.json sont requis pour le bon fonctionnement de la PWA.
