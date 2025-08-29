@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSR PROS 2025 - Connexion</title>
     
-    <!-- Scripts et polices externes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,34 +42,34 @@
     </div>
 
     <script type="module">
-        // Importation des modules Firebase nécessaires
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+        // Importation des fonctions nécessaires
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
         
-        // Initialisation de Firebase avec la configuration fournie par l'environnement
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        // Configuration de Firebase pour votre projet DSR PROS
+        const firebaseConfig = {
+          apiKey: "AIzaSyAJVt4zqIUXp0oTzkTaXlHhgGUuoj9d618",
+          authDomain: "dsr-pros-9f349.firebaseapp.com",
+          projectId: "dsr-pros-9f349",
+          storageBucket: "dsr-pros-9f349.firebasestorage.app",
+          messagingSenderId: "290416195988",
+          appId: "1:290416195988:web:32161b91ea9f41804cb781",
+          measurementId: "G-X9K4E468TS"
+        };
+        
+        // Initialisation de l'application et des services
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Connexion avec le token personnalisé de l'environnement, si disponible
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        if (initialAuthToken) {
-            signInWithCustomToken(auth, initialAuthToken).then(() => {
-                console.log("Connexion avec le token personnalisé réussie !");
-            }).catch((error) => {
-                console.error("Échec de la connexion avec le token personnalisé:", error);
-            });
-        }
-        
         // Sélection des éléments du DOM
         const loginForm = document.getElementById('login-form');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const errorMessageDiv = document.getElementById('error-message');
 
-        // Gestion de la soumission du formulaire de connexion
+        // Gestion de la soumission du formulaire
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMessageDiv.classList.add('hidden');
@@ -79,13 +78,13 @@
             const password = passwordInput.value;
 
             try {
-                // Tente de se connecter avec l'e-mail et le mot de passe
+                // Tente de se connecter
                 await signInWithEmailAndPassword(auth, email, password);
                 
-                // Si la connexion réussit, redirige l'utilisateur vers la page d'accueil
-                window.location.href = 'accueil.html'; 
+                // Si la connexion réussit, la redirection est gérée par le script de index.html
+                // qui détecte l'état d'authentification.
             } catch (error) {
-                // Gère les erreurs de connexion
+                // Gère les erreurs de connexion et affiche un message à l'utilisateur
                 let message = "Une erreur est survenue. Veuillez réessayer.";
                 switch(error.code) {
                     case 'auth/invalid-email':
