@@ -3,70 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSR PROS 2025 - Chargement</title>
+    <title>DSR PROS</title>
     
-    <meta name="theme-color" content="#10B981"/> 
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png">
-    
+    <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .logo-container {
-            position: relative;
-        }
+        /* Importation de la police Inter depuis Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        .pulse-animation {
-            animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        /* Style pour l'écran de chargement */
+        #loading-screen {
+            transition: opacity 0.5s ease-out;
         }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.15);
-                opacity: 0.8;
-            }
+        .fade-out {
+            opacity: 0;
+        }
+        /* Cacher la barre de défilement */
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        .nav-item.active {
+            color: #2563EB;
+            border-top: 2px solid #2563EB;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-    <div class="logo-container">
-        <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-24 w-auto pulse-animation">
+    <!-- Écran de chargement initial -->
+    <div id="loading-screen" class="fixed inset-0 bg-white flex flex-col justify-center items-center z-50">
+        <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS" class="w-48 h-auto animate-pulse">
+        <p class="mt-4 text-gray-600">Chargement...</p>
     </div>
 
-    <!-- Le script qui utilise firebase-init.js -->
-    <script type="module">
-        import { auth } from './firebase-init.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+    <!-- Page de Connexion -->
+    <div id="login-page" class="min-h-screen flex flex-col justify-center items-center p-4 hidden">
+        <div class="w-full max-w-sm bg-white p-8 rounded-xl shadow-lg">
+            <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS" class="w-32 h-auto mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">Bienvenue</h1>
+            <p class="text-center text-gray-500 mb-6">Connectez-vous pour continuer</p>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="vous@exemple.com" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Mot de passe</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="********" required>
+                </div>
+                <button type="submit" id="login-btn" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                    Se Connecter
+                </button>
+            </form>
+            <p id="login-message" class="mt-4 text-center text-red-500 text-sm hidden"></p>
+        </div>
+    </div>
+
+    <!-- Application Principale -->
+    <div id="app-page" class="min-h-screen max-h-screen flex flex-col hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-md sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex-shrink-0">
+                        <img class="h-10 w-auto" src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS">
+                    </div>
+                    <div class="flex-1 text-center">
+                        <div class="text-xl font-bold text-gray-700" id="page-title">Accueil</div>
+                        <p id="user-info" class="text-xs text-gray-500 mt-1">ID utilisateur: --</p>
+                    </div>
+                    <button id="menu-btn" class="text-gray-500 hover:text-gray-700 relative">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+                        <div id="menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl py-1 z-50 hidden">
+                            <button id="sign-out-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Se déconnecter
+                            </button>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenu principal (change dynamiquement) -->
+        <main class="flex-grow overflow-y-auto pb-20">
+            <!-- Vue Accueil -->
+            <div id="home-view" class="p-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="prestataires-view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span class="font-semibold text-gray-700 text-center">Prestataires</span>
+                    </div>
+                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="intervenants-view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span class="font-semibold text-gray-700 text-center">Intervenants</span>
+                    </div>
+                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="checklist-view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500 mb-2"><path d="M15 6.5A3.5 3.5 0 0 0 8.5 3A3.5 3.5 0 0 0 5 6.5A3.5 3.5 0 0 0 8.5 10a3.5 3.5 0 0 0 6.5-3.5Z"/><path d="M18.5 10a3.5 3.5 0 0 0 0-7H17a6.5 6.5 0 0 0-5 2.24"/><path d="m5 12 2 2 4-4"/><path d="m5 19 2 2 4-4"/><path d="M15 13h6"/><path d="M15 17h6"/></svg>
+                        <span class="font-semibold text-gray-700 text-center">Check-list</span>
+                    </div>
+                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="programme-view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500 mb-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                        <span class="font-semibold text-gray-700 text-center">Programme</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vues pour les listes (Prestataires, Intervenants) -->
+            <div id="prestataires-view" class="p-4 hidden">
+                <div class="space-y-4" id="prestataires-list">
+                     <!-- Contenu sera injecté par JS -->
+                </div>
+            </div>
+            <div id="intervenants-view" class="p-4 hidden">
+                <div class="space-y-4" id="intervenants-list">
+                    <!-- Contenu sera injecté par JS -->
+                </div>
+            </div>
+            
+            <!-- Vue Scanner -->
+            <div id="scanner-view" class="p-4 hidden flex flex-col items-center">
+                <div class="w-full max-w-md bg-gray-800 rounded-lg aspect-square mb-4 flex items-center justify-center">
+                    <p class="text-white">Zone de scan</p>
+                </div>
+                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Scanner un code</button>
+            </div>
+            
+            <!-- Vues Placeholder -->
+            <div id="checklist-view" class="p-4 hidden">
+                <h2 class="text-2xl font-bold text-gray-700">Check-list</h2>
+                <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
+            </div>
+            <div id="programme-view" class="p-4 hidden">
+                <h2 class="text-2xl font-bold text-gray-700">Programme</h2>
+                <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
+            </div>
+
+        </main>
+
+        <!-- Footer / Barre de navigation -->
+        <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
+            <nav class="flex justify-around">
+                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="prestataires-view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Prestataires</span>
+                </a>
+                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="scanner-view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+                    <span class="text-xs">Scanner</span>
+                </a>
+                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="intervenants-view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Intervenants</span>
+                </a>
+            </nav>
+        </footer>
         
-        // Gérer la redirection après la vérification de l'état d'authentification
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // L'utilisateur est connecté, rediriger vers la page d'accueil
-                window.location.href = 'accueil.html';
-            } else {
-                // L'utilisateur n'est pas connecté, rediriger vers la page de connexion
-                window.location.href = 'login.html';
+    </div>
+
+    <!-- Modale de message customisée -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg p-6 shadow-xl max-w-sm w-full">
+            <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2"></h3>
+            <p id="modal-message" class="text-gray-600 mb-4"></p>
+            <div class="flex justify-end">
+                <button id="modal-close-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script principal -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        // --- CONFIGURATION SUPABASE ---
+        // Les clés de la base de données fournies par l'utilisateur
+        const supabaseUrl = 'https://ltryylhccibeegksgtva.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0cnl5bGhjY2liZWVna3NndHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDk3NzcsImV4cCI6MjA3MTk4NTc3N30.mRzhae2CTxhGaOz7R5JDvBZv9v1v3Mcw9VMwh4Xg5nQ';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const elements = {
+            loadingScreen: document.getElementById('loading-screen'),
+            loginPage: document.getElementById('login-page'),
+            appPage: document.getElementById('app-page'),
+            loginForm: document.getElementById('login-form'),
+            emailInput: document.getElementById('email'),
+            passwordInput: document.getElementById('password'),
+            loginBtn: document.getElementById('login-btn'),
+            loginMessage: document.getElementById('login-message'),
+            pageTitle: document.getElementById('page-title'),
+            allViews: document.querySelectorAll('main > div'),
+            navItems: document.querySelectorAll('.nav-item'),
+            menuItems: document.querySelectorAll('.menu-item'),
+            menuBtn: document.getElementById('menu-btn'),
+            menuDropdown: document.getElementById('menu-dropdown'),
+            signOutBtn: document.getElementById('sign-out-btn'),
+            prestatairesList: document.getElementById('prestataires-list'),
+            intervenantsList: document.getElementById('intervenants-list'),
+            messageModal: document.getElementById('message-modal'),
+            modalTitle: document.getElementById('modal-title'),
+            modalMessage: document.getElementById('modal-message'),
+            modalCloseBtn: document.getElementById('modal-close-btn'),
+            userInfo: document.getElementById('user-info'),
+        };
+
+        // Simuler le chargement et afficher la page de connexion
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                elements.loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    elements.loadingScreen.classList.add('hidden');
+                    elements.loginPage.classList.remove('hidden');
+                }, 500);
+            }, 1500);
+        });
+
+        // Fonction pour afficher une modale personnalisée
+        function showModal(title, message, isError = false) {
+            elements.modalTitle.textContent = title;
+            elements.modalMessage.textContent = message;
+            elements.modalTitle.classList.toggle('text-red-500', isError);
+            elements.messageModal.classList.remove('hidden');
+        }
+
+        elements.modalCloseBtn.addEventListener('click', () => {
+            elements.messageModal.classList.add('hidden');
+        });
+
+        // Gérer la "connexion" simulée
+        elements.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Dans une vraie application, on ferait ici une vérification d'authentification
+            // Pour ce prototype, on considère que la connexion est toujours réussie
+            const userId = 'user_demo_12345';
+            elements.userInfo.textContent = `ID utilisateur: ${userId}`;
+            elements.loginPage.classList.add('hidden');
+            elements.appPage.classList.remove('hidden');
+            navigateToView('home-view', 'Accueil');
+        });
+
+        // Gérer la "déconnexion"
+        elements.signOutBtn.addEventListener('click', () => {
+            elements.appPage.classList.add('hidden');
+            elements.loginPage.classList.remove('hidden');
+        });
+
+        // Fonction de navigation
+        function navigateToView(viewId, title) {
+            elements.allViews.forEach(view => view.classList.add('hidden'));
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                elements.pageTitle.textContent = title;
+                
+                // Charger les données de la liste si nécessaire
+                if (viewId === 'prestataires-view') {
+                    startSupabaseListener('prestataires', elements.prestatairesList);
+                } else if (viewId === 'intervenants-view') {
+                    startSupabaseListener('intervenants', elements.intervenantsList);
+                }
+            }
+            updateActiveNav(viewId);
+        }
+
+        // Mettre à jour la navigation active dans le footer
+        function updateActiveNav(activeViewId) {
+            elements.navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.target === activeViewId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        // Gérer le menu déroulant
+        elements.menuBtn.addEventListener('click', () => {
+            elements.menuDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!elements.menuBtn.contains(event.target) && !elements.menuDropdown.contains(event.target)) {
+                elements.menuDropdown.classList.add('hidden');
             }
         });
-    </script>
 
+        // Écouteurs d'événements pour la navigation
+        elements.navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToView(item.dataset.target, item.querySelector('span').textContent);
+            });
+        });
+
+        elements.menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToView(item.dataset.target, item.querySelector('span').textContent);
+            });
+        });
+
+        // Écouteur en temps réel de Supabase
+        let listenerUnsubscribe = null;
+        async function startSupabaseListener(tableName, container) {
+            // S'il y a un écouteur actif, le désactiver d'abord
+            if (listenerUnsubscribe) {
+                listenerUnsubscribe.unsubscribe();
+                listenerUnsubscribe = null;
+            }
+
+            // Afficher un message de chargement
+            container.innerHTML = `<p class="text-center mt-8">Chargement des données...</p>`;
+
+            // Démarrer un écouteur en temps réel
+            listenerUnsubscribe = supabase
+                .channel(tableName)
+                .on('postgres_changes', { event: '*', schema: 'public', table: tableName }, payload => {
+                    fetchAndDisplayData(tableName, container);
+                })
+                .subscribe();
+
+            // Charger les données initiales
+            fetchAndDisplayData(tableName, container);
+        }
+
+        // Fonction pour récupérer et afficher les données de Supabase
+        async function fetchAndDisplayData(tableName, container) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .select('*');
+
+                if (error) throw error;
+                
+                if (data.length === 0) {
+                    container.innerHTML = `<p class="text-center mt-8 text-gray-500">Aucune donnée trouvée dans la table '${tableName}'.</p>`;
+                } else {
+                    renderList(data, container, tableName);
+                }
+            } catch (error) {
+                console.error(`Erreur de chargement pour ${tableName}:`, error);
+                container.innerHTML = `<p class="text-center mt-8 text-red-500">Erreur de chargement des données. Veuillez vérifier la console.</p>`;
+            }
+        }
+
+        // Fonction pour générer le HTML de la liste
+        function renderList(data, container, tableName) {
+            let html = '<div class="space-y-3">';
+            data.forEach(item => {
+                html += `
+                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-gray-800">${item.prenom || ''} ${item.nom || ''}</p>
+                            <p class="text-sm text-gray-600">${item.entreprise || 'N/A'}</p>
+                            <p class="text-xs text-gray-400 mt-1">ID: ${item.barcode || item.id}</p>
+                        </div>
+                        <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}">
+                            ${item.checked_in ? 'Validé' : 'Valider'}
+                        </button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Ajouter les écouteurs pour les boutons de check-in
+            container.querySelectorAll('.check-in-btn').forEach(button => {
+                button.addEventListener('click', () => toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName));
+            });
+        }
+
+        // Fonction pour gérer le check-in
+        async function toggleCheckIn(id, currentStatus, tableName) {
+            try {
+                const { error } = await supabase
+                    .from(tableName)
+                    .update({ checked_in: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                
+                showModal('Succès', `Statut mis à jour avec succès pour l'ID ${id}.`);
+            } catch(error) {
+                console.error('Erreur lors de la mise à jour du check-in:', error);
+                showModal('Erreur', "Une erreur est survenue lors de la mise à jour.", true);
+            }
+        }
+        
+        // Inscription du Service Worker pour la PWA
+        // Note: Le fichier sw.js et manifest.json sont requis pour le bon fonctionnement de la PWA.
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker enregistré avec succès:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Échec de l\'enregistrement du ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
+
