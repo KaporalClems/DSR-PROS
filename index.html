@@ -17,7 +17,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* bg-gray-100 */
+            background-color: #f3f4f6;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -51,27 +51,10 @@
         <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-24 w-auto pulse-animation">
     </div>
 
+    <!-- Le script qui utilise firebase-init.js -->
     <script type="module">
-        // Import des fonctions nécessaires du SDK Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
-        
-        // Configuration de Firebase pour votre projet
-        const firebaseConfig = {
-          apiKey: "AIzaSyAJVt4zqIUXp0oTzkTaXlHhgGUuoj9d618",
-          authDomain: "dsr-pros-9f349.firebaseapp.com",
-          projectId: "dsr-pros-9f349",
-          storageBucket: "dsr-pros-9f349.firebasestorage.app",
-          messagingSenderId: "290416195988",
-          appId: "1:290416195988:web:32161b91ea9f41804cb781",
-          measurementId: "G-X9K4E468TS"
-        };
-        
-        // Initialisation de l'application Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const analytics = getAnalytics(app); // Initialise Google Analytics
+        import { auth } from './firebase-init.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         
         // Gérer la redirection après la vérification de l'état d'authentification
         onAuthStateChanged(auth, (user) => {
