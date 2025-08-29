@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSR PROS 2025 - Chargement</title>
     
-    <!-- Thème de couleur pour PWA -->
     <meta name="theme-color" content="#10B981"/> 
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png">
     
-    <!-- Scripts et polices externes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,21 +52,26 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        // Import des fonctions nécessaires du SDK Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
         
-        // Initialisation de Firebase avec les variables globales
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+        // Configuration de Firebase pour votre projet
+        const firebaseConfig = {
+          apiKey: "AIzaSyAJVt4zqIUXp0oTzkTaXlHhgGUuoj9d618",
+          authDomain: "dsr-pros-9f349.firebaseapp.com",
+          projectId: "dsr-pros-9f349",
+          storageBucket: "dsr-pros-9f349.firebasestorage.app",
+          messagingSenderId: "290416195988",
+          appId: "1:290416195988:web:32161b91ea9f41804cb781",
+          measurementId: "G-X9K4E468TS"
         };
-    
+        
+        // Initialisation de l'application Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const analytics = getAnalytics(app); // Initialise Google Analytics
         
         // Gérer la redirection après la vérification de l'état d'authentification
         onAuthStateChanged(auth, (user) => {
