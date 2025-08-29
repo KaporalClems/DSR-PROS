@@ -101,6 +101,9 @@
         #login-modal > div {
             z-index: 2;
         }
+        #fullscreen-modal {
+            z-index: 100;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -185,9 +188,12 @@
                 <h2 class="text-2xl font-bold text-gray-700">Check-list</h2>
                 <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
             </div>
-            <div id="programme-view" class="p-4 hidden">
-                <h2 class="text-2xl font-bold text-gray-700">Programme</h2>
-                <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
+            <div id="programme-view" class="p-4 hidden flex flex-col items-center">
+                <h2 class="text-2xl font-bold text-gray-700 mb-4">Programme DSR PROS 2025</h2>
+                <img id="programme-image" src="https://raw.githubusercontent.com/KaporalClems/DSR-PROS/6ce9137ac5dfb09289cd2f5cf0a3a3ef1de87c8d/Programme%20DSR%20PROS%202025.png" alt="Programme DSR PROS 2025" class="w-full h-auto rounded-lg shadow-md cursor-pointer">
+                <button id="fullscreen-btn" class="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
+                    Agrandir
+                </button>
             </div>
 
         </main>
@@ -298,6 +304,12 @@
             </button>
         </div>
     </div>
+
+    <!-- Modale plein écran pour l'image du programme -->
+    <div id="fullscreen-modal" class="fixed inset-0 bg-black bg-opacity-90 flex flex-col justify-center items-center p-4 hidden">
+        <button id="fullscreen-close-btn" class="absolute top-4 right-4 text-white text-3xl z-50">&times;</button>
+        <img src="" id="fullscreen-image" class="max-w-full max-h-full object-contain">
+    </div>
     
     <!-- Script pour la génération des QR codes -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -348,6 +360,12 @@
             togglePasswordBtn: document.getElementById('toggle-password'),
             eyeOpenIcon: document.getElementById('eye-open'),
             eyeClosedIcon: document.getElementById('eye-closed'),
+            // Nouveaux éléments pour la modale plein écran
+            fullscreenBtn: document.getElementById('fullscreen-btn'),
+            fullscreenModal: document.getElementById('fullscreen-modal'),
+            fullscreenImage: document.getElementById('fullscreen-image'),
+            fullscreenCloseBtn: document.getElementById('fullscreen-close-btn'),
+            programmeImage: document.getElementById('programme-image')
         };
 
         // Simuler le chargement et afficher la page de connexion
@@ -445,14 +463,16 @@
         elements.navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                navigateToView(item.dataset.target, item.querySelector('span').textContent);
+                const targetText = item.querySelector('span').textContent;
+                navigateToView(item.dataset.target, targetText);
             });
         });
 
         elements.menuItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                navigateToView(item.dataset.target, item.querySelector('span').textContent);
+                const targetText = item.querySelector('span').textContent;
+                navigateToView(item.dataset.target, targetText);
             });
         });
 
@@ -630,6 +650,21 @@
         elements.closeTicketBtn.addEventListener('click', () => {
             elements.ticketModal.classList.add('hidden');
         });
+
+        // Gérer l'affichage plein écran de l'image du programme
+        elements.programmeImage.addEventListener('click', () => {
+            elements.fullscreenImage.src = elements.programmeImage.src;
+            elements.fullscreenModal.classList.remove('hidden');
+        });
+
+        elements.fullscreenBtn.addEventListener('click', () => {
+            elements.fullscreenImage.src = elements.programmeImage.src;
+            elements.fullscreenModal.classList.remove('hidden');
+        });
+
+        elements.fullscreenCloseBtn.addEventListener('click', () => {
+            elements.fullscreenModal.classList.add('hidden');
+        });
         
         // Inscription du Service Worker pour la PWA
         // Note: Le fichier sw.js et manifest.json sont requis pour le bon fonctionnement de la PWA.
@@ -647,3 +682,4 @@
     </script>
 </body>
 </html>
+
