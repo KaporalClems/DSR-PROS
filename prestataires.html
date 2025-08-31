@@ -1,336 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prestataires - DSR PROS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        body::-webkit-scrollbar {
-            display: none;
-        }
-        .pass-card {
-            border-radius: 1.5rem;
-            color: white;
-            padding: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            transition: background 0.3s ease;
-        }
-        .pass-card::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            width: 80px;
-            height: 80px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-        .pass-card::after {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            left: -30px;
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-        .dotted-line {
-            border-top: 2px dashed rgba(255,255,255,0.3);
-            margin: 1.5rem 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prestataires</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script type="module" src="assets/app.js"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div id="app-page" class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-white shadow-md sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex-shrink-0">
-                        <a href="index.html">
-                            <img class="h-10 w-auto" src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS">
-                        </a>
-                    </div>
-                    <div class="flex-1 text-center">
-                        <div class="text-xl font-bold text-gray-700">Prestataires</div>
-                    </div>
-                    <div class="w-10"></div>
-                </div>
-            </div>
-        </header>
+<body onload="loadPrestataires()">
+  <header>
+    <button id="menuBtn">☰</button>
+    <h1>Prestataires</h1>
+  </header>
 
-        <!-- Contenu principal -->
-        <main class="flex-grow overflow-y-auto pb-20 p-4">
-            <div id="prestataires-list" class="space-y-4">
-                <p class="text-center mt-8">Chargement des données...</p>
-            </div>
-        </main>
-        
-        <!-- Footer / Barre de navigation -->
-        <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
-            <nav class="flex justify-around">
-                <a href="prestataires.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors active">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    <span class="text-xs">Prestataires</span>
-                </a>
-                <a href="scanner.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
-                    <span class="text-xs">Scanner</span>
-                </a>
-                <a href="intervenants.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    <span class="text-xs">Intervenants</span>
-                </a>
-            </nav>
-        </footer>
-        
-    </div>
+  <nav id="sideMenu">
+    <a href="home.html">Accueil</a>
+    <a href="intervenants.html">Intervenants</a>
+    <a href="prestataires.html">Prestataires</a>
+    <a href="checklist.html">Check-list</a>
+    <a href="programme.html">Programme</a>
+    <a href="scanner.html">Scanner</a>
+    <a href="apropos.html">À propos</a>
+  </nav>
 
-    <!-- Modales (doivent être sur toutes les pages pour fonctionner) -->
-    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-lg p-6 shadow-xl max-w-sm w-full">
-            <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2"></h3>
-            <p id="modal-message" class="text-gray-600 mb-4"></p>
-            <div class="flex justify-end">
-                <button id="modal-close-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">OK</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="ticket-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl p-6 shadow-xl w-full max-w-sm">
-            <div class="pass-card">
-                <div class="flex items-center">
-                    <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo" class="h-10 w-10 mr-4 rounded-full bg-white p-1">
-                    <h2 class="text-lg font-bold">PASS DSR PROS</h2>
-                </div>
-                <div class="dotted-line"></div>
-                <div class="flex justify-between items-center text-sm font-light mb-4">
-                    <div>
-                        <p class="opacity-80">NOM</p>
-                        <p id="pass-nom" class="font-semibold text-lg uppercase"></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="opacity-80">ENTREPRISE</p>
-                        <p id="pass-entreprise" class="font-semibold text-lg"></p>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center text-sm font-light mb-4">
-                    <div>
-                        <p class="opacity-80">STATUT</p>
-                        <p id="pass-statut" class="font-semibold text-lg"></p>
-                    </div>
-                     <div class="text-right">
-                        <p class="opacity-80">ID</p>
-                        <p id="pass-id" class="font-semibold text-lg"></p>
-                    </div>
-                </div>
-                <div class="flex justify-center mt-6">
-                    <div id="pass-qrcode" class="bg-white p-2 rounded-lg"></div>
-                </div>
-            </div>
-            
-            <button id="close-ticket-btn" class="w-full mt-4 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
-                Fermer
-            </button>
-        </div>
-    </div>
+  <main>
+    <h2>Liste des prestataires</h2>
+    <ul id="prestatairesList"></ul>
+  </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        // --- CONFIGURATION SUPABASE ---
-        const supabaseUrl = 'https://ltryylhccibeegksgtva.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0cnl5bGhjY2liZWVna3NndHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDk3NzcsImV4cCI6MjA3MTk4NTc3N30.mRzhae2CTxhGaOz7R5JDvBZv9v1v3Mcw9VMwh4Xg5nQ';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
-        const elements = {
-            prestatairesList: document.getElementById('prestataires-list'),
-            messageModal: document.getElementById('message-modal'),
-            modalTitle: document.getElementById('modal-title'),
-            modalMessage: document.getElementById('modal-message'),
-            modalCloseBtn: document.getElementById('modal-close-btn'),
-            ticketModal: document.getElementById('ticket-modal'),
-            closeTicketBtn: document.getElementById('close-ticket-btn'),
-            passNom: document.getElementById('pass-nom'),
-            passEntreprise: document.getElementById('pass-entreprise'),
-            passStatut: document.getElementById('pass-statut'),
-            passId: document.getElementById('pass-id'),
-            passQrcode: document.getElementById('pass-qrcode'),
-            passCard: document.querySelector('#ticket-modal .pass-card'),
-        };
-
-        function showModal(title, message, isError = false) {
-            elements.modalTitle.textContent = title;
-            elements.modalMessage.textContent = message;
-            elements.modalTitle.classList.toggle('text-red-500', isError);
-            elements.messageModal.classList.remove('hidden');
-        }
-
-        elements.modalCloseBtn.addEventListener('click', () => {
-            elements.messageModal.classList.add('hidden');
-        });
-
-        elements.closeTicketBtn.addEventListener('click', () => {
-            elements.ticketModal.classList.add('hidden');
-        });
-
-        // Fonction pour récupérer et afficher les données de Supabase
-        async function fetchAndDisplayData(tableName, container) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .select('*');
-
-                if (error) throw error;
-                
-                if (data.length === 0) {
-                    container.innerHTML = `<p class="text-center mt-8 text-gray-500">Aucune donnée trouvée dans la table '${tableName}'.</p>`;
-                } else {
-                    renderList(data, container, tableName);
-                }
-            } catch (error) {
-                console.error(`Erreur de chargement pour ${tableName}:`, error);
-                container.innerHTML = `<p class="text-center mt-8 text-red-500">Erreur de chargement des données. Veuillez vérifier la console.</p>`;
-            }
-        }
-
-        function renderList(data, container, tableName) {
-            let html = '<div class="space-y-3">';
-            const tablePrefix = tableName.toUpperCase().slice(0, 5);
-            data.forEach((item, index) => {
-                const itemID = `${tablePrefix}${String(index + 1).padStart(2, '0')}`;
-                html += `
-                    <div class="bg-white p-4 rounded-xl shadow-md list-item cursor-pointer" data-id="${item.id}" data-table="${tableName}">
-                        <div id="qrcode-${item.id}" class="w-20 h-20"></div>
-                        <div class="flex-1">
-                            <p class="font-bold text-gray-800">${item.prenom || ''} ${item.nom || ''}</p>
-                            <p class="text-sm text-gray-600">${item.entreprise || 'N/A'}</p>
-                            <p class="text-xs text-gray-400 mt-1">ID: ${item.barcode || item.id}</p>
-                        </div>
-                        <div class="flex flex-col items-end">
-                             <span class="text-sm font-semibold text-gray-500 mb-2">${itemID}</span>
-                             <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}" onclick="event.stopPropagation();">
-                                ${item.checked_in ? 'Validé' : 'Valider'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            container.innerHTML = html;
-
-            data.forEach(item => {
-                const qrcodeContainer = document.getElementById(`qrcode-${item.id}`);
-                if (qrcodeContainer && item.barcode) {
-                     new QRCode(qrcodeContainer, {
-                        text: item.barcode,
-                        width: 80,
-                        height: 80,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
-                }
-            });
-
-            container.querySelectorAll('.check-in-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName);
-                });
-            });
-
-            container.querySelectorAll('.list-item').forEach(card => {
-                card.addEventListener('click', () => {
-                    showTicketModal(card.dataset.id, card.dataset.table);
-                });
-            });
-        }
-
-        async function toggleCheckIn(id, currentStatus, tableName) {
-            try {
-                const { error } = await supabase
-                    .from(tableName)
-                    .update({ checked_in: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                
-                showModal('Succès', `Statut mis à jour avec succès pour l'ID ${id}.`);
-                fetchAndDisplayData('prestataires', elements.prestatairesList); // Re-fetch to update list
-            } catch(error) {
-                console.error('Erreur lors de la mise à jour du check-in:', error);
-                showModal('Erreur', "Une erreur est survenue lors de la mise à jour.", true);
-            }
-        }
-
-        async function showTicketModal(id, tableName) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) throw error;
-
-                if (tableName === 'prestataires') {
-                    elements.passCard.style.background = 'linear-gradient(135deg, #2e8637, #34983f)';
-                } else if (tableName === 'intervenants') {
-                    elements.passCard.style.background = 'linear-gradient(135deg, #003680, #004aad)';
-                }
-                
-                elements.passNom.textContent = `${data.prenom || ''} ${data.nom || ''}`;
-                elements.passEntreprise.textContent = data.entreprise || 'N/A';
-                elements.passStatut.textContent = data.checked_in ? 'Validé' : 'En attente';
-                elements.passStatut.classList.remove('text-green-500', 'text-yellow-500');
-                elements.passStatut.classList.add(data.checked_in ? 'text-green-500' : 'text-yellow-500');
-                elements.passId.textContent = data.barcode || data.id;
-
-                elements.passQrcode.innerHTML = '';
-                new QRCode(elements.passQrcode, {
-                    text: data.barcode || data.id,
-                    width: 128,
-                    height: 128,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-
-                elements.ticketModal.classList.remove('hidden');
-
-            } catch(error) {
-                console.error('Erreur lors du chargement des données du ticket:', error);
-                showModal('Erreur', "Impossible de charger les données du ticket.", true);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-             fetchAndDisplayData('prestataires', elements.prestatairesList);
-        });
-    </script>
+  <footer>
+    <a href="intervenants.html">👨‍🏫</a>
+    <a href="scanner.html">📷</a>
+    <a href="prestataires.html">🏢</a>
+  </footer>
 </body>
 </html>
 
