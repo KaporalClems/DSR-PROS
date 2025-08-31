@@ -35,7 +35,7 @@ header {
 header h1 {
   flex: 1;
   text-align: center;
-  font-size: 20px;
+  font-size: 1.2rem;
 }
 
 #menuBtn {
@@ -52,14 +52,25 @@ header input[type="text"] {
   border-radius: 20px;
   border: none;
   outline: none;
-  width: 180px;
+  width: 140px;
   font-size: 0.9rem;
   transition: all 0.2s ease-in-out;
 }
 
 header input[type="text"]:focus {
-  width: 220px;
+  width: 180px;
   box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* Couleur dynamique selon page */
+body.intervenants header,
+body.intervenants footer {
+  background-color: #004aad;
+}
+
+body.prestataires header,
+body.prestataires footer {
+  background-color: #28a745;
 }
 
 /* =============================
@@ -174,8 +185,8 @@ h2 {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  width: 340px;
-  max-width: 95%;
+  width: 90%;
+  max-width: 340px;
   position: relative;
 }
 
@@ -260,4 +271,54 @@ button#saveBtn {
 
 button#saveBtn:hover {
   background: #003580;
+}
+
+/* =============================
+   MEDIA QUERIES – RESPONSIVE
+============================= */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1rem;
+  }
+
+  header input[type="text"] {
+    width: 120px;
+  }
+
+  header input[type="text"]:focus {
+    width: 160px;
+  }
+
+  footer a {
+    font-size: 1.1rem;
+  }
+
+  main {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  header h1 {
+    text-align: center;
+  }
+
+  header input[type="text"] {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .list .item {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  footer {
+    font-size: 1rem;
+  }
 }
