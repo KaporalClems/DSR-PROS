@@ -3,18 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accueil - DSR PROS</title>
+  <title>DSR PROS - Accueil</title>
   <link rel="stylesheet" href="assets/style.css">
-  <script src="assets/app.js" defer></script>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#004aad">
+
+  <!-- Icônes PWA -->
+  <link rel="apple-touch-icon" sizes="192x192" href="assets/logo-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="assets/logo-512.png">
+
+  <!-- JsBarcode pour pass -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <!-- App JS -->
+  <script type="module" src="assets/app.js"></script>
 </head>
 <body>
   <!-- HEADER -->
   <header>
     <button id="menuBtn">☰</button>
-    <h1>DSR PROS</h1>
+    <h1>Accueil</h1>
   </header>
 
-  <!-- MENU HAMBURGER -->
+  <!-- MENU LATÉRAL -->
   <nav id="sideMenu">
     <a href="home.html">Accueil</a>
     <a href="intervenants.html">Intervenants</a>
@@ -25,19 +37,37 @@
     <a href="apropos.html">À propos</a>
   </nav>
 
-  <!-- CONTENU -->
+  <!-- CONTENU PRINCIPAL -->
   <main>
-    <section class="grid">
-      <a href="intervenants.html">👨‍🏫 Intervenants</a>
-      <a href="prestataires.html">🏢 Prestataires</a>
-      <a href="checklist.html">📋 Check-list</a>
-      <a href="programme.html">📅 Programme</a>
-      <a href="scanner.html">📷 Scanner</a>
-      <a href="apropos.html">ℹ️ À propos</a>
-    </section>
+    <div style="text-align:center; margin-top:30px;">
+      <img src="assets/logo-512.png" alt="Logo DSR PROS" style="max-width:200px; margin-bottom:20px;">
+      <h2>Bienvenue sur DSR PROS</h2>
+      <p>Votre application professionnelle pour suivre le programme, consulter les intervenants et prestataires, scanner vos accès et plus encore.</p>
+    </div>
+
+    <div style="margin-top:40px; display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; text-align:center;">
+      <a href="intervenants.html" class="item">
+        👨‍🏫<br><span>Intervenants</span>
+      </a>
+      <a href="prestataires.html" class="item">
+        🏢<br><span>Prestataires</span>
+      </a>
+      <a href="programme.html" class="item">
+        📅<br><span>Programme</span>
+      </a>
+      <a href="scanner.html" class="item">
+        📷<br><span>Scanner</span>
+      </a>
+      <a href="checklist.html" class="item">
+        ✅<br><span>Check-list</span>
+      </a>
+      <a href="apropos.html" class="item">
+        ℹ️<br><span>À propos</span>
+      </a>
+    </div>
   </main>
 
-  <!-- FOOTER FIXE -->
+  <!-- FOOTER -->
   <footer>
     <a href="intervenants.html">👨‍🏫</a>
     <a href="scanner.html">📷</a>
