@@ -1,4 +1,9 @@
 /* =============================
+   Importation de la police Inter
+============================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* =============================
    Reset & Base
 ============================= */
 * {
@@ -8,34 +13,39 @@
 }
 
 body {
-  font-family: "Arial", sans-serif;
+  font-family: "Inter", sans-serif;
   background: #f5f6fa;
   color: #333;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+  display: none;
 }
 
 /* =============================
-   HEADER
+   HEADER & FOOTER
 ============================= */
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  background: #004aad; /* bleu par défaut pour intervenants */
   color: white;
-  padding: 10px 15px;
+  padding: 15px;
   display: flex;
   align-items: center;
   z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 header h1 {
   flex: 1;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 20px;
 }
 
 #menuBtn {
@@ -46,58 +56,27 @@ header h1 {
   cursor: pointer;
 }
 
-/* Barre de recherche dans le header */
-header input[type="text"] {
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: none;
-  outline: none;
-  width: 140px;
-  font-size: 0.9rem;
-  transition: all 0.2s ease-in-out;
-}
-
-header input[type="text"]:focus {
-  width: 180px;
-  box-shadow: 0 0 5px rgba(255,255,255,0.5);
-}
-
-/* Couleur dynamique selon page */
-body.intervenants header,
-body.intervenants footer {
-  background-color: #004aad;
-}
-
-body.prestataires header,
-body.prestataires footer {
-  background-color: #28a745;
-}
-
-/* =============================
-   FOOTER
-============================= */
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  background: #004aad; /* bleu par défaut pour intervenants */
   color: white;
   display: flex;
   justify-content: space-around;
-  align-items: center;
   padding: 10px 0;
-  font-size: 1.2rem;
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
 }
 
 footer a {
   color: white;
+  font-size: 22px;
   text-decoration: none;
-  transition: transform 0.2s;
 }
 
-footer a:hover {
-  transform: scale(1.2);
+.nav-item.active {
+  color: #2563EB;
+  border-top: 2px solid #2563EB;
 }
 
 /* =============================
@@ -145,57 +124,107 @@ h2 {
 }
 
 /* =============================
-   LISTE
+   LISTE & CARTES
 ============================= */
 .list {
   list-style: none;
 }
 
-.list .item {
+.list .item,
+.list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
   padding: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  transition: transform 0.2s;
 }
 
-.list .item:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+.list .item:hover,
+.list-item:hover {
+  transform: scale(1.02);
   background: #f0f4ff;
 }
 
+.pass-card {
+  border-radius: 1.5rem;
+  color: white;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
+}
+
+.pass-card::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.pass-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.dotted-line {
+  border-top: 2px dashed rgba(255,255,255,0.3);
+  margin: 1.5rem 0;
+}
+
 /* =============================
-   MODALE
+   MODALES
 ============================= */
-.modal {
+.modal, #login-modal, #fullscreen-modal {
   display: none;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
   z-index: 2000;
 }
 
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  width: 90%;
-  max-width: 340px;
-  position: relative;
+#login-modal {
+  background-image: url('https://raw.githubusercontent.com/KaporalClems/DSR-PROS/511c8885b18d664dd25e29ec83ec5a61164de508/Destination-Sud-Reunion-Rencontre-BTOB-2025.png');
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.3s ease;
 }
 
-#closeBtn {
+#login-modal::before {
+  content: '';
   position: absolute;
-  top: 10px;
-  right: 15px;
-  cursor: pointer;
-  font-size: 22px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 1;
+}
+
+#login-modal > div {
+  z-index: 2;
+}
+
+#fullscreen-modal {
+  z-index: 100;
 }
 
 /* =============================
@@ -208,27 +237,7 @@ h2 {
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   position: relative;
   overflow: hidden;
-  font-family: "Arial", sans-serif;
-}
-
-/* Effet billet perforé ✂️ */
-.pass::before,
-.pass::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: #f5f6fa;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-}
-.pass::before {
-  left: -10px;
-}
-.pass::after {
-  right: -10px;
+  font-family: "Inter", sans-serif;
 }
 
 .pass h2 {
@@ -266,7 +275,6 @@ button#saveBtn {
   font-size: 16px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 button#saveBtn:hover {
@@ -274,51 +282,27 @@ button#saveBtn:hover {
 }
 
 /* =============================
-   MEDIA QUERIES – RESPONSIVE
+   RESPONSIVE
 ============================= */
 @media (max-width: 768px) {
-  header h1 {
-    font-size: 1rem;
-  }
-
-  header input[type="text"] {
-    width: 120px;
-  }
-
-  header input[type="text"]:focus {
-    width: 160px;
-  }
-
-  footer a {
-    font-size: 1.1rem;
-  }
-
   main {
-    padding: 15px;
+    padding: 10px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+  .list .item, .list-item {
+    grid-template-columns: 1fr;
+  }
+  header h1 {
+    font-size: 18px;
   }
 }
 
 @media (max-width: 480px) {
-  header {
-    flex-direction: column;
-    gap: 5px;
-  }
-
   header h1 {
-    text-align: center;
+    font-size: 16px;
   }
-
-  header input[type="text"] {
-    width: 100%;
-    max-width: 200px;
-  }
-
-  .list .item {
-    padding: 10px;
-    font-size: 0.9rem;
-  }
-
-  footer {
-    font-size: 1rem;
+  footer a {
+    font-size: 20px;
   }
 }
