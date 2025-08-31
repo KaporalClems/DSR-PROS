@@ -5,17 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prestataires</title>
   <link rel="stylesheet" href="assets/style.css">
-  <!-- App JS (gère Supabase, JsBarcode, html2canvas) -->
   <script type="module" src="assets/app.js"></script>
 </head>
 <body onload="loadPrestataires()">
-  <!-- HEADER -->
-  <header>
+
+  <!-- HEADER vert -->
+  <header style="background-color:#28a745;">
     <button id="menuBtn">☰</button>
     <h1>Prestataires</h1>
+    <input type="text" id="searchInput" placeholder="Rechercher..." onkeyup="filterList()" />
   </header>
 
-  <!-- MENU -->
+  <!-- MENU LATÉRAL -->
   <nav id="sideMenu">
     <a href="home.html">Accueil</a>
     <a href="intervenants.html">Intervenants</a>
@@ -43,5 +44,18 @@
     <a href="scanner.html">📷</a>
     <a href="prestataires.html">🏢</a>
   </footer>
+
+  <!-- Filtre liste -->
+  <script>
+    window.filterList = function() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const list = document.querySelectorAll('#prestatairesList .item');
+      list.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(filter) ? '' : 'none';
+      });
+    };
+  </script>
 </body>
 </html>
