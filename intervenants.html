@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intervenants</title>
   <link rel="stylesheet" href="assets/style.css">
-  <!-- Librairies externes -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <!-- App JS (module qui gère Supabase, JsBarcode, html2canvas) -->
   <script type="module" src="assets/app.js"></script>
 </head>
 <body onload="loadIntervenants()">
@@ -35,9 +34,7 @@
 
   <!-- MODALE -->
   <div id="modal" class="modal">
-    <div class="modal-content" id="modalContent">
-      <span id="closeBtn">&times;</span>
-    </div>
+    <div class="modal-content" id="modalContent"></div>
   </div>
 
   <!-- FOOTER -->
