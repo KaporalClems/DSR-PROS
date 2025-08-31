@@ -3,257 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSR PROS 2025 - Intervenants</title>
-    
+    <title>Intervenants - DSR PROS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
     <style>
-        /* Styles CSS extraits du fichier DSRPROS2025.htm */
-        body { font-family: 'Inter', sans-serif; scrollbar-width: none; -ms-overflow-style: none; }
-        body::-webkit-scrollbar { display: none; }
-        .pkpass-card {
-            position: relative; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease-in-out;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .pkpass-card:hover { transform: scale(1.02); }
-        .pkpass-card::before, .pkpass-card::after {
-            content: ''; position: absolute; top: 50%; width: 30px; height: 30px; background: #f3f4f6; border-radius: 50%;
+        body::-webkit-scrollbar {
+            display: none;
         }
-        .pkpass-card::before { left: -15px; transform: translateY(-50%); }
-        .pkpass-card::after { right: -15px; transform: translateY(-50%); }
-        .pkpass-footer { height: 10px; width: 100%; }
-        .pkpass-footer.prestataire { background-color: #10B981; }
-        .pkpass-footer.intervenant { background-color: #3B82F6; }
-        .page-transition { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        #search-overlay { transition: opacity 0.3s ease-in-out; opacity: 0; visibility: hidden; }
-        #search-overlay.open { opacity: 1; visibility: visible; }
+        .pass-card {
+            border-radius: 1.5rem;
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        .pass-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .pass-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .dotted-line {
+            border-top: 2px dashed rgba(255,255,255,0.3);
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans h-screen overflow-hidden flex flex-col">
+<body class="bg-gray-100 font-sans">
+    <div id="app-page" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-md sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex-shrink-0">
+                        <a href="index.html">
+                            <img class="h-10 w-auto" src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS">
+                        </a>
+                    </div>
+                    <div class="flex-1 text-center">
+                        <div class="text-xl font-bold text-gray-700">Intervenants</div>
+                    </div>
+                    <div class="w-10"></div>
+                </div>
+            </div>
+        </header>
 
-    <header class="bg-blue-500 text-white p-4 flex items-center justify-between shadow-lg sticky top-0 z-20">
-        <div class="flex items-center space-x-2">
-            <a href="index.html">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" />
-                </svg>
-            </a>
-            <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-8">
+        <!-- Contenu principal -->
+        <main class="flex-grow overflow-y-auto pb-20 p-4">
+            <div id="intervenants-list" class="space-y-4">
+                <p class="text-center mt-8">Chargement des données...</p>
+            </div>
+        </main>
+        
+        <!-- Footer / Barre de navigation -->
+        <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
+            <nav class="flex justify-around">
+                <a href="prestataires.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Prestataires</span>
+                </a>
+                <a href="scanner.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+                    <span class="text-xs">Scanner</span>
+                </a>
+                <a href="intervenants.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Intervenants</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
+
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg p-6 shadow-xl max-w-sm w-full">
+            <h3 id="modal-title" class="text-lg font-bold text-gray-800 mb-2"></h3>
+            <p id="modal-message" class="text-gray-600 mb-4"></p>
+            <div class="flex justify-end">
+                <button id="modal-close-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">OK</button>
+            </div>
         </div>
-        <a href="search.html" id="search-btn" class="text-white focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M21.71 20.29L18.41 17C19.4 15.82 20 14.25 20 12.5C20 8.36 16.64 5 12.5 5C8.36 5 5 8.36 5 12.5C5 16.64 8.36 20 12.5 20C14.25 20 15.82 19.4 17 18.41L20.29 21.71C20.68 22.1 21.32 22.1 21.71 21.71C22.1 21.32 22.1 20.68 21.71 20.29ZM12.5 18C9.55 18 7 15.45 7 12.5C7 9.55 9.55 7 12.5 7C15.45 7 18 9.55 18 12.5C18 15.45 15.45 18 12.5 18Z" />
-            </svg>
-        </a>
-    </header>
-
-    <main id="app-content" class="flex-grow overflow-y-auto pb-20 page-transition">
-        <div class="p-4">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">Intervenants</h1>
-            <input type="search" id="search-intervenants" placeholder="Rechercher..." class="w-full p-2 mb-4 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all">
-            <div id="intervenants-list" class="space-y-3"></div>
-        </div>
-    </main>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg flex justify-around p-2 border-t border-gray-200 z-30">
-        <a href="prestataires.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
-            </svg>
-            <span class="text-xs">Prestataires</span>
-        </a>
-        <a href="scanner.html" id="scan-button" class="scan-button bg-orange-500 text-white rounded-full w-16 h-16 flex items-center justify-center -mt-8 shadow-xl border-4 border-white z-40">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 6H14V8H10V6ZM10 10H14V14H10V10ZM10 16H14V18H10V16Z" />
-            </svg>
-        </a>
-        <a href="intervenants.html" class="nav-btn text-blue-500 flex flex-col items-center w-1/5 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
-            </svg>
-            <span class="text-xs">Intervenants</span>
-        </a>
-    </nav>
+    </div>
     
-    <div id="pkpass-modal" class="fixed inset-0 bg-gray-100 z-40 hidden p-4 flex flex-col justify-center items-center transition-opacity duration-300">
-        <div id="pkpass-card-content" class="pkpass-card w-full max-w-sm">
-            <div class="p-6 border-b-2 border-dashed border-gray-300">
-                <p id="pkpass-type" class="text-sm uppercase text-gray-500"></p>
-                <h2 id="pkpass-name" class="text-3xl font-bold text-gray-800"></h2>
-                <p id="pkpass-company" class="text-lg text-gray-600"></p>
+    <div id="ticket-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 shadow-xl w-full max-w-sm">
+            <div class="pass-card">
+                <div class="flex items-center">
+                    <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo" class="h-10 w-10 mr-4 rounded-full bg-white p-1">
+                    <h2 class="text-lg font-bold">PASS DSR PROS</h2>
+                </div>
+                <div class="dotted-line"></div>
+                <div class="flex justify-between items-center text-sm font-light mb-4">
+                    <div>
+                        <p class="opacity-80">NOM</p>
+                        <p id="pass-nom" class="font-semibold text-lg uppercase"></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="opacity-80">ENTREPRISE</p>
+                        <p id="pass-entreprise" class="font-semibold text-lg"></p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center text-sm font-light mb-4">
+                    <div>
+                        <p class="opacity-80">STATUT</p>
+                        <p id="pass-statut" class="font-semibold text-lg"></p>
+                    </div>
+                     <div class="text-right">
+                        <p class="opacity-80">ID</p>
+                        <p id="pass-id" class="font-semibold text-lg"></p>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-6">
+                    <div id="pass-qrcode" class="bg-white p-2 rounded-lg"></div>
+                </div>
             </div>
-            <div class="p-6 flex flex-col items-center">
-                <img id="pkpass-barcode-img" class="mb-4" alt="Code-barres"/>
-                <p id="pkpass-id" class="font-mono text-sm text-gray-500"></p>
-            </div>
-            <div id="pkpass-footer" class="pkpass-footer"></div>
-        </div>
-        <div class="mt-8 flex space-x-4">
-            <button id="export-pkpass-btn" class="bg-blue-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-blue-600 transition-colors">
-                Exporter en PNG
-            </button>
-            <button id="close-pkpass-btn" class="bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 transition-colors">
+            
+            <button id="close-ticket-btn" class="w-full mt-4 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
                 Fermer
             </button>
         </div>
     </div>
-    
-    <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg p-6 w-full max-w-sm text-center shadow-lg">
-            <h2 id="message-title" class="text-xl font-bold mb-4"></h2>
-            <p id="message-content" class="text-gray-600 mb-4"></p>
-            <button id="message-close-btn" class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">OK</button>
-        </div>
-    </div>
 
-    <script>
-        // --- DONNÉES DE DÉMONSTRATION (état de l'application) ---
-        const appState = {
-            prestataires: [
-                { id: 'PREST01', nom: 'Dupont', prenom: 'Jean', entreprise: 'Tech Solutions', checkedIn: false },
-                { id: 'PREST02', nom: 'Martin', prenom: 'Marie', entreprise: 'Innovate SARL', checkedIn: true },
-                { id: 'PREST03', nom: 'Bernard', prenom: 'Luc', entreprise: 'Digital Services', checkedIn: false },
-            ],
-            intervenants: [
-                { id: 'INTER01', nom: 'Petit', prenom: 'Sophie', entreprise: 'Expert Conference', checkedIn: false },
-                { id: 'INTER02', nom: 'Robert', prenom: 'Paul', entreprise: 'Webinar Pro', checkedIn: true },
-            ]
-        };
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        // --- SÉLECTION DES ÉLÉMENTS DU DOM ---
-        const dom = {
-            searchIntervenants: document.getElementById('search-intervenants'),
+        // --- CONFIGURATION SUPABASE ---
+        const supabaseUrl = 'https://ltryylhccibeegksgtva.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0cnl5bGhjY2liZWVna3NndHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDk3NzcsImV4cCI6MjA3MTk4NTc3N30.mRzhae2CTxhGaOz7R5JDvBZv9v1v3Mcw9VMwh4Xg5nQ';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const elements = {
             intervenantsList: document.getElementById('intervenants-list'),
-            pkpassModal: document.getElementById('pkpass-modal'),
-            pkpassCardContent: document.getElementById('pkpass-card-content'),
-            pkpassFooter: document.getElementById('pkpass-footer'),
-            exportPkpassBtn: document.getElementById('export-pkpass-btn'),
-            closePkpassBtn: document.getElementById('close-pkpass-btn'),
             messageModal: document.getElementById('message-modal'),
-            messageTitle: document.getElementById('message-title'),
-            messageContent: document.getElementById('message-content'),
-            messageCloseBtn: document.getElementById('message-close-btn')
-        };
-        
-        /**
-         * Affiche une modale de message personnalisée.
-         */
-        const showMessage = (title, content, type = 'success') => {
-            dom.messageTitle.textContent = title;
-            dom.messageContent.innerHTML = content;
-            dom.messageModal.style.display = 'flex';
+            modalTitle: document.getElementById('modal-title'),
+            modalMessage: document.getElementById('modal-message'),
+            modalCloseBtn: document.getElementById('modal-close-btn'),
+            ticketModal: document.getElementById('ticket-modal'),
+            closeTicketBtn: document.getElementById('close-ticket-btn'),
+            passNom: document.getElementById('pass-nom'),
+            passEntreprise: document.getElementById('pass-entreprise'),
+            passStatut: document.getElementById('pass-statut'),
+            passId: document.getElementById('pass-id'),
+            passQrcode: document.getElementById('pass-qrcode'),
+            passCard: document.querySelector('#ticket-modal .pass-card'),
         };
 
-        /**
-         * Ouvre la modale pkpass pour une personne spécifique.
-         */
-        const openPkpassModal = (personId) => {
-            const allPeople = [...appState.prestataires, ...appState.intervenants];
-            const person = allPeople.find(p => p.id === personId);
-            if (person) {
-                const isPrestataire = person.id.startsWith('PREST');
+        function showModal(title, message, isError = false) {
+            elements.modalTitle.textContent = title;
+            elements.modalMessage.textContent = message;
+            elements.modalTitle.classList.toggle('text-red-500', isError);
+            elements.messageModal.classList.remove('hidden');
+        }
+
+        elements.modalCloseBtn.addEventListener('click', () => {
+            elements.messageModal.classList.add('hidden');
+        });
+
+        elements.closeTicketBtn.addEventListener('click', () => {
+            elements.ticketModal.classList.add('hidden');
+        });
+
+        // Fonction pour récupérer et afficher les données de Supabase
+        async function fetchAndDisplayData(tableName, container) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .select('*');
+
+                if (error) throw error;
                 
-                document.getElementById('pkpass-type').textContent = isPrestataire ? 'Prestataire' : 'Intervenant';
-                document.getElementById('pkpass-name').textContent = `${person.prenom} ${person.nom}`;
-                document.getElementById('pkpass-company').textContent = person.entreprise;
-                document.getElementById('pkpass-id').textContent = person.id;
-                
-                dom.pkpassFooter.classList.remove('prestataire', 'intervenant');
-                dom.pkpassFooter.classList.add(isPrestataire ? 'prestataire' : 'intervenant');
-
-                const canvas = document.createElement('canvas');
-                JsBarcode(canvas, `${person.id}`, {
-                    format: "CODE128", lineColor: "#000", width: 2.5, height: 80, displayValue: false
-                });
-                document.getElementById('pkpass-barcode-img').src = canvas.toDataURL("image/png");
-                
-                dom.pkpassModal.style.display = 'flex';
+                if (data.length === 0) {
+                    container.innerHTML = `<p class="text-center mt-8 text-gray-500">Aucune donnée trouvée dans la table '${tableName}'.</p>`;
+                } else {
+                    renderList(data, container, tableName);
+                }
+            } catch (error) {
+                console.error(`Erreur de chargement pour ${tableName}:`, error);
+                container.innerHTML = `<p class="text-center mt-8 text-red-500">Erreur de chargement des données. Veuillez vérifier la console.</p>`;
             }
-        };
+        }
 
-        /**
-         * Exporte la carte PKpass en image PNG.
-         */
-        const exportPkpass = () => {
-            const buttonsContainer = dom.exportPkpassBtn.parentElement;
-            buttonsContainer.style.display = 'none';
-            html2canvas(dom.pkpassCardContent).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `ticket-${document.getElementById('pkpass-id').textContent}.png`;
-                link.href = canvas.toDataURL('image/png');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                buttonsContainer.style.display = 'flex';
-            }).catch(err => {
-                console.error("Erreur lors de l'exportation:", err);
-                showMessage('Erreur', 'Impossible d\'exporter le ticket. Veuillez réessayer.', 'error');
-                buttonsContainer.style.display = 'flex';
-            });
-        };
-        
-        /**
-         * Met à jour l'état de check-in d'une personne et rafraîchit la liste.
-         */
-        window.toggleCheckIn = (personId) => {
-            const person = appState.intervenants.find(p => p.id === personId);
-            if (person) {
-                person.checkedIn = !person.checkedIn;
-                renderList();
-            }
-        };
-
-        /**
-         * Rend la liste des intervenants.
-         */
-        const renderList = () => {
-            const container = dom.intervenantsList;
-            const searchTerm = dom.searchIntervenants.value.toLowerCase();
-            container.innerHTML = '';
-            
-            const filteredData = appState.intervenants.filter(p => 
-                `${p.prenom} ${p.nom} ${p.entreprise}`.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredData.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-500 mt-4">Aucun résultat trouvé.</p>`;
-                return;
-            }
-
-            filteredData.forEach(person => {
-                const card = document.createElement('div');
-                card.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all duration-150';
-                card.addEventListener('click', () => openPkpassModal(person.id));
-
-                card.innerHTML = `
-                    <div>
-                        <p class="font-bold text-lg">${person.prenom} ${person.nom}</p>
-                        <p class="text-sm text-gray-600">${person.entreprise}</p>
-                        <p class="text-xs font-mono bg-gray-200 inline-block px-2 py-1 rounded mt-1">${person.id}</p>
-                    </div>
-                    <div class="check-in-status text-right">
-                        <label class="flex items-center cursor-pointer" onclick="event.stopPropagation();">
-                            <input type="checkbox" ${person.checkedIn ? 'checked' : ''} class="form-checkbox h-5 w-5 text-green-500 rounded-full" onchange="window.toggleCheckIn('${person.id}')">
-                            <span class="ml-2 text-sm font-medium ${person.checkedIn ? 'text-green-600' : 'text-gray-500'}">${person.checkedIn ? 'Validé' : 'À valider'}</span>
-                        </label>
+        function renderList(data, container, tableName) {
+            let html = '<div class="space-y-3">';
+            const tablePrefix = tableName.toUpperCase().slice(0, 5);
+            data.forEach((item, index) => {
+                const itemID = `${tablePrefix}${String(index + 1).padStart(2, '0')}`;
+                html += `
+                    <div class="bg-white p-4 rounded-xl shadow-md list-item cursor-pointer" data-id="${item.id}" data-table="${tableName}">
+                        <div id="qrcode-${item.id}" class="w-20 h-20"></div>
+                        <div class="flex-1">
+                            <p class="font-bold text-gray-800">${item.prenom || ''} ${item.nom || ''}</p>
+                            <p class="text-sm text-gray-600">${item.entreprise || 'N/A'}</p>
+                            <p class="text-xs text-gray-400 mt-1">ID: ${item.barcode || item.id}</p>
+                        </div>
+                        <div class="flex flex-col items-end">
+                             <span class="text-sm font-semibold text-gray-500 mb-2">${itemID}</span>
+                             <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}" onclick="event.stopPropagation();">
+                                ${item.checked_in ? 'Validé' : 'Valider'}
+                            </button>
+                        </div>
                     </div>
                 `;
-                container.appendChild(card);
             });
-        };
+            html += '</div>';
+            container.innerHTML = html;
 
-        // --- GESTION DES ÉVÉNEMENTS ---
+            data.forEach(item => {
+                const qrcodeContainer = document.getElementById(`qrcode-${item.id}`);
+                if (qrcodeContainer && item.barcode) {
+                     new QRCode(qrcodeContainer, {
+                        text: item.barcode,
+                        width: 80,
+                        height: 80,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                }
+            });
+
+            container.querySelectorAll('.check-in-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName);
+                });
+            });
+
+            container.querySelectorAll('.list-item').forEach(card => {
+                card.addEventListener('click', () => {
+                    showTicketModal(card.dataset.id, card.dataset.table);
+                });
+            });
+        }
+
+        async function toggleCheckIn(id, currentStatus, tableName) {
+            try {
+                const { error } = await supabase
+                    .from(tableName)
+                    .update({ checked_in: !currentStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                
+                showModal('Succès', `Statut mis à jour avec succès pour l'ID ${id}.`);
+                fetchAndDisplayData('intervenants', elements.intervenantsList); // Re-fetch to update list
+            } catch(error) {
+                console.error('Erreur lors de la mise à jour du check-in:', error);
+                showModal('Erreur', "Une erreur est survenue lors de la mise à jour.", true);
+            }
+        }
+
+        async function showTicketModal(id, tableName) {
+            try {
+                const { data, error } = await supabase
+                    .from(tableName)
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                if (tableName === 'prestataires') {
+                    elements.passCard.style.background = 'linear-gradient(135deg, #2e8637, #34983f)';
+                } else if (tableName === 'intervenants') {
+                    elements.passCard.style.background = 'linear-gradient(135deg, #003680, #004aad)';
+                }
+                
+                elements.passNom.textContent = `${data.prenom || ''} ${data.nom || ''}`;
+                elements.passEntreprise.textContent = data.entreprise || 'N/A';
+                elements.passStatut.textContent = data.checked_in ? 'Validé' : 'En attente';
+                elements.passStatut.classList.remove('text-green-500', 'text-yellow-500');
+                elements.passStatut.classList.add(data.checked_in ? 'text-green-500' : 'text-yellow-500');
+                elements.passId.textContent = data.barcode || data.id;
+
+                elements.passQrcode.innerHTML = '';
+                new QRCode(elements.passQrcode, {
+                    text: data.barcode || data.id,
+                    width: 128,
+                    height: 128,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+
+                elements.ticketModal.classList.remove('hidden');
+
+            } catch(error) {
+                console.error('Erreur lors du chargement des données du ticket:', error);
+                showModal('Erreur', "Impossible de charger les données du ticket.", true);
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
-            renderList();
-            dom.searchIntervenants.addEventListener('input', renderList);
-            dom.closePkpassBtn.addEventListener('click', () => { dom.pkpassModal.style.display = 'none'; });
-            dom.exportPkpassBtn.addEventListener('click', exportPkpass);
-            dom.messageCloseBtn.addEventListener('click', () => { dom.messageModal.style.display = 'none'; });
+             fetchAndDisplayData('intervenants', elements.intervenantsList);
         });
     </script>
 </body>
