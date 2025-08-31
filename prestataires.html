@@ -137,6 +137,18 @@
                         <input type="text" id="searchInputMobile" placeholder="🔎 Rechercher un prestataire..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-gray-800">
                     </div>
                 </div>
+                <!-- Menu de navigation -->
+                <div id="menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl py-1 z-50 hidden">
+                    <a href="home.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Accueil</a>
+                    <a href="prestataires.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Prestataires</a>
+                    <a href="intervenants.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Intervenants</a>
+                    <a href="programme.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Programme</a>
+                    <a href="scanner.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Scanner</a>
+                    <a href="checklist.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Checklist</a>
+                    <a href="apropos.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">À propos</a>
+                    <div class="border-t border-gray-200 mt-1"></div>
+                    <button id="sign-out-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Se déconnecter</button>
+                </div>
             </div>
         </header>
         
@@ -151,15 +163,15 @@
         <!-- Footer / Barre de navigation -->
         <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
             <nav class="flex justify-around">
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="prestataires-view">
+                <a href="prestataires.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="prestataires-view">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span class="text-xs">Prestataires</span>
                 </a>
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="scanner-view">
+                <a href="scanner.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="scanner-view">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
                     <span class="text-xs">Scanner</span>
                 </a>
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="intervenants-view">
+                <a href="intervenants.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="intervenants-view">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span class="text-xs">Intervenants</span>
                 </a>
@@ -388,3 +400,4 @@
     </script>
 </body>
 </html>
+
