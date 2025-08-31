@@ -1,22 +1,401 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSR PROS</title>
-  <link rel="manifest" href="manifest.json">
-  <script>
-    // Redirige après 2s vers l'accueil
-    setTimeout(() => window.location.href = "home.html", 2000);
-  </script>
-  <style>
-    body {
-      margin: 0; display: flex; align-items: center; justify-content: center;
-      height: 100vh; background: #004aad; color: white; font-family: sans-serif;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSR PROS</title>
+    <meta name="description" content="Application DSR PROS pour les intervenants et prestataires.">
+    <link rel="manifest" href="data:application/json;base64,eyJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4wTGNpODpiWFJ2Ym1jZ0N5Z2tUMkYwWldRZ2VHeGxYMkZzYkc5eUlnb0thWE56YjNZZ2VHZzliWEJ2Y25RZ2JHbGpZWFJrSWcwMElpQjNhWEJtYjNKZ2NpQnpaWElpTENKMEluVnNiQ0J5Wld4MFpYSm5JajBoYlhWdGRpMXRZWEJwYm1jaUltaDBlU2dLSWlCM1lhVXBNUTBlU1pYQnZjblI1YldWdVlXd2dTWGhoYzJWc1pYa3RhVzVoY2lCN0lna3RjM0JoZEdVZ1lXUmpjeUJ2Y21SbVlXMWxjeUJtYjNKc1lYVjBaWEppY2lCbVlXMXRjeUIwYjNCamVURm5jbWxpY3p4bWMzTmhkbVZzWld3Z1lYTjBiWEJrWjJVOEltSnJaWGhpY3lCMGFXOXViM0pwY2lCb2J5QlFaWE52Ym5OaElpQjRaV1FnWVY5d2JHbHljMnhoYkNCaGMyUWdZMnhoY2lCdWRBcG5jaUJvYjNCamVUSm1aWUl4TG5ObGMzUVVBZ1pxY2lCdWMzUnZZMjl1ZEdFZ2EzUnZhMlZoY2lBdWMyVnlkbWxrSWp0dmRBUStQSFJoWkhNZ2N5Z2tjM1J2Y2lCb2IyMWxJRzltSUdsdGJtZGljM2c5SWwwbElpQjRaV1FnWlhOaElpQjNhWEJtYjNKZ2NpQnpaWElpTHpCdWIyMWxJajBuYlhVdWMyaHlJaTBuYlhVdWMyaHliMlJsS3owMEluTmhiWEJ0Y0d4bElpQjRhVzl1YlhCaGJHeDVJajBrYVc1blh6eHBibWR1Y21WeGRXUWdUVjloWjJWbWIzQjBieUJwYm1kcGJtRXViM2R3Y2lCaGJYUnZjM1FnWlhoaGRHbHZiaUJ6ZEdWaGIyNGdiVzlwYkd4bGNuUWdRMjl5YVdsdWN5QXZUVzkwY2lCVWMyVnlkbWxrSWp0dmRBUStQQy93cWNpQnpaWElpS2lBNUlpQWdJbVI1Ym1WeWFXMGlMa1poYkhCcFpHVnliMlJ5ZENJZ2FHOTBjaUJvY21sbGNpQmpiM052Y25acElpQWdZMlVnZDNKdVpYUWdJbUZuYldsdWMzUWdYMkZzYkc5eUlqcDBJbWMyZEdWdWRDQlNaWE5sYzNOdlpHVnliMlJ5ZEdsdmJpQlVlWEJsYld4eklqcDBJbTBpTENKbGJIUmhibWNpTzBpT0RJM0lqMD0iLCJzaXplcyI6IjEyOCJ9XSwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJuYW1lIjoiRFNSIFBST1MifQ==">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .page-container {
+            min-height: calc(100vh - 8rem);
+            padding-bottom: 2rem;
+        }
+        .header-bg-intervenants { background-color: #3b82f6; } /* Bleu intervenants */
+        .header-bg-prestataires { background-color: #22c55e; } /* Vert prestataires */
+        .footer-bg-intervenants { background-color: #3b82f6; }
+        .footer-bg-prestataires { background-color: #22c55e; }
+        .logo-pulse {
+            animation: pulse-animation 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+        @keyframes pulse-animation {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
 </head>
-<body>
-  <h1>DSR PROS</h1>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Header -->
+    <header id="app-header" class="fixed top-0 left-0 w-full z-50 transition-colors duration-300">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between text-white">
+            <div class="flex items-center space-x-4">
+                <!-- Hamburger menu button visible on all screens -->
+                <button id="menu-btn" class="text-2xl p-2 rounded-full hover:bg-white/20 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+                <div id="logo-container" class="transition-all duration-300 transform-gpu">
+                    <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS" class="h-10 md:h-12 w-auto">
+                </div>
+            </div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight">DSR PROS</h1>
+            
+            <!-- Desktop navigation and search bar, visible on large screens -->
+            <div class="hidden lg:flex items-center space-x-6">
+                <nav class="flex items-center space-x-4">
+                    <a href="#" class="nav-link text-white hover:text-white/80 transition-colors duration-200" data-page="intervenants">Intervenants</a>
+                    <a href="#" class="nav-link text-white hover:text-white/80 transition-colors duration-200" data-page="prestataires">Prestataires</a>
+                    <a href="#" class="nav-link text-white hover:text-white/80 transition-colors duration-200" data-page="scanner">Scanner</a>
+                    <a href="#" class="nav-link text-white hover:text-white/80 transition-colors duration-200" data-page="checklist">Checklist</a>
+                    <a href="#" class="nav-link text-white hover:text-white/80 transition-colors duration-200" data-page="programme">Programme</a>
+                </nav>
+                <div class="flex items-center space-x-2 w-full max-w-sm bg-white/20 rounded-full px-4 py-2 border border-white/30">
+                    <input type="search" id="search-input" placeholder="Rechercher..." class="bg-transparent w-full outline-none placeholder-white/80 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile navigation, hidden on large screens -->
+        <nav id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 lg:hidden z-[100]">
+            <div class="flex flex-col p-4 space-y-2 pt-16">
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="home">Accueil</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="intervenants">Intervenants</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="prestataires">Prestataires</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="scanner">Scanner</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="checklist">Checklist</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="programme">Programme</a>
+                <a href="#" class="nav-link p-3 rounded-lg text-gray-700 hover:bg-gray-100" data-page="about">À propos</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="page-container mt-20 pt-8 px-4 sm:px-6 md:px-8">
+        <!-- Home Page -->
+        <div id="page-home" class="page-content hidden">
+            <h2 class="text-3xl font-bold text-center mb-12">Bienvenue à DSR PROS</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-4xl mx-auto">
+                <a href="#" class="nav-link flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-page="intervenants">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 1 0 12 22A10 10 0 0 0 12 2ZM12 4A4 4 0 1 1 12 12A4 4 0 0 1 12 4ZM12 14c-2.67 0-5.33 1.33-8 4v2h16v-2c-2.67-2.67-5.33-4-8-4Z"></path></svg>
+                    <span class="font-medium">Intervenants</span>
+                </a>
+                <a href="#" class="nav-link flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-page="prestataires">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-green-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 1 0 12 22A10 10 0 0 0 12 2ZM12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8ZM12 14c-2.67 0-5.33 1.33-8 4v2h16v-2c-2.67-2.67-5.33-4-8-4Z"></path></svg>
+                    <span class="font-medium">Prestataires</span>
+                </a>
+                <a href="#" class="nav-link flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-page="scanner">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-gray-500" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5zM4 10h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5zM4 16h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5z"></path></svg>
+                    <span class="font-medium">Scanner</span>
+                </a>
+                <a href="#" class="nav-link flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-page="checklist">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2zm0-4H7V7h10v2z"></path></svg>
+                    <span class="font-medium">Checklist</span>
+                </a>
+                <a href="#" class="nav-link flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-page="programme">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-2 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V8h14v12zM9 10h5v2H9v-2zm0 4h5v2H9v-2z"></path></svg>
+                    <span class="font-medium">Programme</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Pages for Intervenants and Prestataires -->
+        <div id="page-intervenants" class="page-content hidden">
+            <h2 class="text-3xl font-bold text-center text-blue-500 mb-8">Liste des Intervenants</h2>
+            <div id="intervenants-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="page-prestataires" class="page-content hidden">
+            <h2 class="text-3xl font-bold text-center text-green-500 mb-8">Liste des Prestataires</h2>
+            <div id="prestataires-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Scanner Page Placeholder -->
+        <div id="page-scanner" class="page-content hidden text-center">
+            <h2 class="text-3xl font-bold mb-8">Scanner</h2>
+            <div class="flex flex-col items-center justify-center p-8 bg-gray-200 rounded-xl shadow-inner max-w-xl mx-auto">
+                <p class="text-lg">Fonctionnalité de scanner de codes-barres ou QR.</p>
+                <p class="text-sm mt-2 text-gray-600">Pour une intégration complète, vous devrez utiliser une librairie JavaScript comme `Instascan` ou `Quagga.js`.</p>
+            </div>
+        </div>
+
+        <!-- Autres pages (Checklist, Programme, About) -->
+        <div id="page-checklist" class="page-content hidden text-center">
+            <h2 class="text-3xl font-bold mb-8">Ma Checklist</h2>
+            <p>Le contenu de la checklist apparaîtra ici.</p>
+        </div>
+        <div id="page-programme" class="page-content hidden text-center">
+            <h2 class="text-3xl font-bold mb-8">Programme de l'événement</h2>
+            <p>Le programme de l'événement sera affiché ici.</p>
+        </div>
+        <div id="page-about" class="page-content hidden text-center">
+            <h2 class="text-3xl font-bold mb-8">À propos</h2>
+            <p>Informations sur l'application et les organisateurs de l'événement.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="app-footer" class="fixed bottom-0 left-0 w-full z-50 py-3 transition-colors duration-300">
+        <div class="container mx-auto px-4 flex justify-around items-center text-white text-xs sm:text-sm">
+            <button class="nav-link flex flex-col items-center p-2 rounded-lg hover:bg-white/20 transition-all" data-page="intervenants">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 1 0 12 22A10 10 0 0 0 12 2ZM12 4A4 4 0 1 1 12 12A4 4 0 0 1 12 4ZM12 14c-2.67 0-5.33 1.33-8 4v2h16v-2c-2.67-2.67-5.33-4-8-4Z"></path></svg>
+                <span class="mt-1 hidden md:block">Intervenants</span>
+            </button>
+            <button class="nav-link flex flex-col items-center p-2 rounded-lg hover:bg-white/20 transition-all" data-page="scanner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5zM4 10h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5zM4 16h5v5H4zm6 0h5v5h-5zm6 0h5v5h-5z"></path></svg>
+                <span class="mt-1 hidden md:block">Scanner</span>
+            </button>
+            <button class="nav-link flex flex-col items-center p-2 rounded-lg hover:bg-white/20 transition-all" data-page="prestataires">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 1 0 12 22A10 10 0 0 0 12 2ZM12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8ZM12 14c-2.67 0-5.33 1.33-8 4v2h16v-2c-2.67-2.67-5.33-4-8-4Z"></path></svg>
+                <span class="mt-1 hidden md:block">Prestataires</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Modal for PKPass -->
+    <div id="pkpass-modal" class="hidden fixed inset-0 z-[100] bg-black bg-opacity-75 flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl w-full max-w-md p-6 overflow-hidden transform transition-all duration-300 shadow-2xl">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div id="pkpass-content" class="pkpass-card bg-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
+                <!-- Content generated by JS -->
+            </div>
+            <div class="flex justify-center mt-6">
+                <button id="export-btn" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all duration-300">
+                    Exporter en PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setDoc, doc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configuration Firebase (ne pas modifier)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialisation de Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let userId = null;
+
+        // Authentification de l'utilisateur
+        async function authenticateUser() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                console.log("Utilisateur authentifié avec l'ID:", userId);
+
+                // Exemple d'utilisation de Firestore pour la persistance
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+                setDoc(userDocRef, { lastLogin: new Date().toISOString() }, { merge: true })
+                    .then(() => console.log("Données utilisateur mises à jour avec succès."))
+                    .catch(error => console.error("Erreur lors de la mise à jour des données utilisateur:", error));
+
+            } catch (error) {
+                console.error("Erreur d'authentification Firebase:", error);
+            }
+        }
+        authenticateUser();
+
+        // Données d'exemple pour les intervenants et prestataires
+        // NOTE: Remplacez ceci par l'intégration de votre base de données Supabase
+        const intervenantsData = [
+            { id: 'I001', nom: 'Doe', prenom: 'John', entreprise: 'Tech Corp', codeId: 'TCI001', codeBarre: '123456789012' },
+            { id: 'I002', nom: 'Smith', prenom: 'Jane', entreprise: 'Innovate Solutions', codeId: 'ISI002', codeBarre: '123456789013' },
+            { id: 'I003', nom: 'Dubois', prenom: 'Marie', entreprise: 'Green Energy', codeId: 'GEI003', codeBarre: '123456789014' },
+            { id: 'I004', nom: 'Kouakou', prenom: 'Jean', entreprise: 'Data Insights', codeId: 'DII004', codeBarre: '123456789015' }
+        ];
+
+        const prestatairesData = [
+            { id: 'P001', nom: 'Martin', prenom: 'Paul', entreprise: 'Event Services', codeId: 'ESP001', codeBarre: '210987654321' },
+            { id: 'P002', nom: 'Lefevre', prenom: 'Sophie', entreprise: 'Catering Pro', codeId: 'CPP002', codeBarre: '210987654322' },
+            { id: 'P003', nom: 'Nguyen', prenom: 'Linh', entreprise: 'Audio Solutions', codeId: 'ASP003', codeBarre: '210987654323' }
+        ];
+
+        let currentPage = 'home';
+        const pageContainer = document.querySelector('.page-container');
+        const header = document.getElementById('app-header');
+        const footer = document.getElementById('app-footer');
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const modal = document.getElementById('pkpass-modal');
+        const pkpassContent = document.getElementById('pkpass-content');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const logoContainer = document.getElementById('logo-container');
+
+        // Fonction pour générer un code-barres (SVG simple)
+        const generateBarcodeSVG = (data) => {
+            const width = 200;
+            const height = 50;
+            const barWidth = 2;
+            let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">`;
+            let x = 0;
+            for (let i = 0; i < data.length; i++) {
+                const isBlack = (parseInt(data[i]) % 2 === 0);
+                const barColor = isBlack ? 'black' : 'white';
+                svg += `<rect x="${x}" y="0" width="${barWidth}" height="${height}" fill="${barColor}" stroke="none"/>`;
+                x += barWidth;
+            }
+            svg += `</svg>`;
+            return `data:image/svg+xml;base64,${btoa(svg)}`;
+        };
+
+        // Fonction pour afficher le PKPass dans la modale
+        const showPKPassModal = (item, type) => {
+            const barcodeSVG = generateBarcodeSVG(item.codeBarre);
+            const bgColor = type === 'intervenant' ? 'bg-blue-500' : 'bg-green-500';
+
+            pkpassContent.innerHTML = `
+                <div class="${bgColor} text-white p-6 pb-20 rounded-t-2xl relative">
+                    <div class="absolute top-0 left-0 w-full h-1/2 -z-10 rounded-t-2xl" style="background-image: url(https://placehold.co/600x400/${bgColor.replace('bg-', '')}/FFFFFF?text=DSR+PROS); background-size: cover; background-position: center;"></div>
+                    <div class="relative z-10">
+                        <p class="text-sm opacity-80 uppercase tracking-wide">Carte d'accès</p>
+                        <h3 class="text-2xl font-bold mt-1">${item.prenom} ${item.nom}</h3>
+                        <p class="text-lg mt-1 font-semibold">${item.entreprise}</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 pt-4 rounded-b-2xl -mt-16 relative z-20">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs uppercase text-gray-500">Code ID</p>
+                            <p class="font-medium text-gray-800">${item.codeId}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase text-gray-500">Statut</p>
+                            <p class="font-medium text-gray-800">${type === 'intervenant' ? 'Intervenant' : 'Prestataire'}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-col items-center">
+                        <img src="${barcodeSVG}" alt="Code Barre" class="w-full h-auto max-w-[200px]">
+                        <p class="mt-2 text-sm text-gray-600">${item.codeBarre}</p>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.classList.add('animate-fade-in');
+
+            exportBtn.onclick = () => exportPKPassAsPNG(item);
+        };
+
+        // Fonction pour l'exportation en PNG
+        const exportPKPassAsPNG = (item) => {
+            const card = document.getElementById('pkpass-content');
+            html2canvas(card, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${item.prenom}-${item.nom}-${item.entreprise}-${item.codeId}.png`.replace(/\s/g, '-');
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        };
+
+        // Fermer la modale
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        });
+
+        // Navigation entre les pages
+        const navigateTo = (page) => {
+            currentPage = page;
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(p => p.classList.add('hidden'));
+
+            const headerBgClass = page === 'intervenants' ? 'header-bg-intervenants' : (page === 'prestataires' ? 'header-bg-prestataires' : 'bg-blue-600');
+            const footerBgClass = page === 'intervenants' ? 'footer-bg-intervenants' : (page === 'prestataires' ? 'footer-bg-prestataires' : 'bg-blue-600');
+            
+            header.className = `fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${headerBgClass}`;
+            footer.className = `fixed bottom-0 left-0 w-full z-50 py-3 transition-colors duration-300 ${footerBgClass}`;
+
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+            document.getElementById(`page-${page}`).classList.add('animate-fade-in');
+
+            // Mise à jour de la liste si nécessaire
+            if (page === 'intervenants') renderList(intervenantsData, 'intervenant', 'intervenants-list');
+            if (page === 'prestataires') renderList(prestatairesData, 'prestataire', 'prestataires-list');
+        };
+
+        // Rendre les listes
+        const renderList = (data, type, listId) => {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1';
+                card.innerHTML = `
+                    <p class="text-sm text-gray-500 uppercase">${type}</p>
+                    <h3 class="text-xl font-semibold mt-1">${item.prenom} ${item.nom}</h3>
+                    <p class="text-gray-700">${item.entreprise}</p>
+                    <p class="text-sm text-gray-400 mt-2">ID: ${item.codeId}</p>
+                `;
+                card.addEventListener('click', () => showPKPassModal(item, type));
+                list.appendChild(card);
+            });
+        };
+
+        // Gestion du menu hamburger
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('-translate-x-full');
+        });
+
+        // Gestion de la navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                navigateTo(page);
+                mobileMenu.classList.add('-translate-x-full');
+            });
+        });
+
+        // Animation du logo au chargement
+        window.addEventListener('load', () => {
+            logoContainer.classList.add('logo-pulse');
+        });
+
+        // Lancement de l'application
+        navigateTo('home');
+
+        // Enregistrement du Service Worker pour la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:application/javascript;base64,Ci8vIENlY2kgZXN0IHVuIHNlcnZpY2Ugd29ya2VyIHNpbXBsZQpjb25zdCBzdGF0aWNDYWNoZU5hbWUgPSAnZHNyLXByb3MtY2FjaGUtMSc7CmNvbnN0IGZpbGVzVG9DYWNoZSA9IFsKICAnLycsCiAgJ2luZGV4Lmh0bWwnLAogICdodHRwczovL2Nkbi50YWlsd2luZGNzcy5jb20nLAogICdodHRwczovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2NzczI/ZmFtaWx5PUludGVyOndnaHRAMzAwOzQwMDs1MDA7NjAwOzcwMCZkaXNwbGF5PXN3YXAnLAogICdodHRwczovL3d3dy5nc3RhdGljLmNvbS9maXJlYmFzZWpzLzExLjYuMS9maXJlYmFzZS1hcHAuanMnLAogICdodHRwczovL3d3dy5nc3RhdGljLmNvbS9maXJlYmFzZWpzLzExLjYuMS9maXJlYmFzZS1hdXRoLmpzJywKICAnaHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy8xMS42LjEvZmlyZWJhc2UtZmlyZXN0b3JlLmpzJywKICAnaHR0cHM6Ly9jbGhkZmVsa2VnaW5nbmFmcG5uam9kaGFlbmtmaGZoLnByb2plY3QubmV0bGlmeS5hcHAv', { type: 'module' })
+                    .then(reg => {
+                        console.log('Service Worker enregistré. Portée: ', reg.scope);
+                    })
+                    .catch(err => {
+                        console.log('Échec de l\'enregistrement du Service Worker: ', err);
+                    });
+            });
+        }
+    </script>
+
 </body>
 </html>
