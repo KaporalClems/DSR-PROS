@@ -5,25 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DSR PROS - Accueil</title>
   <link rel="stylesheet" href="assets/style.css">
-
-  <!-- PWA manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#004aad">
-
-  <!-- Icônes PWA -->
-  <link rel="apple-touch-icon" sizes="192x192" href="assets/logo-192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="assets/logo-512.png">
-
-  <!-- JsBarcode pour pass -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-  <!-- App JS -->
   <script type="module" src="assets/app.js"></script>
 </head>
-<body>
+<body class="home">
+
   <!-- HEADER -->
   <header>
     <button id="menuBtn">☰</button>
-    <h1>Accueil</h1>
+    <h1>DSR PROS</h1>
   </header>
 
   <!-- MENU LATÉRAL -->
@@ -37,33 +26,18 @@
     <a href="apropos.html">À propos</a>
   </nav>
 
-  <!-- CONTENU PRINCIPAL -->
+  <!-- CONTENU -->
   <main>
-    <div style="text-align:center; margin-top:30px;">
-      <img src="assets/logo-512.png" alt="Logo DSR PROS" style="max-width:200px; margin-bottom:20px;">
-      <h2>Bienvenue sur DSR PROS</h2>
-      <p>Votre application professionnelle pour suivre le programme, consulter les intervenants et prestataires, scanner vos accès et plus encore.</p>
-    </div>
+    <h2>Bienvenue sur DSR PROS 2025</h2>
+    <p>Accédez rapidement aux intervenants, prestataires, programme et outils du salon.</p>
 
-    <div style="margin-top:40px; display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; text-align:center;">
-      <a href="intervenants.html" class="item">
-        👨‍🏫<br><span>Intervenants</span>
-      </a>
-      <a href="prestataires.html" class="item">
-        🏢<br><span>Prestataires</span>
-      </a>
-      <a href="programme.html" class="item">
-        📅<br><span>Programme</span>
-      </a>
-      <a href="scanner.html" class="item">
-        📷<br><span>Scanner</span>
-      </a>
-      <a href="checklist.html" class="item">
-        ✅<br><span>Check-list</span>
-      </a>
-      <a href="apropos.html" class="item">
-        ℹ️<br><span>À propos</span>
-      </a>
+    <div class="home-links">
+      <a href="intervenants.html" class="card">👨‍🏫 Intervenants</a>
+      <a href="prestataires.html" class="card">🏢 Prestataires</a>
+      <a href="programme.html" class="card">📅 Programme</a>
+      <a href="checklist.html" class="card">✅ Check-list</a>
+      <a href="scanner.html" class="card">📷 Scanner</a>
+      <a href="apropos.html" class="card">ℹ️ À propos</a>
     </div>
   </main>
 
@@ -73,6 +47,8 @@
     <a href="scanner.html">📷</a>
     <a href="prestataires.html">🏢</a>
   </footer>
+
 </body>
 </html>
+
 
