@@ -22,13 +22,6 @@
         /* Importation de la police Inter depuis Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         
-        /* Style pour l'écran de chargement */
-        #loading-screen {
-            transition: opacity 0.5s ease-out;
-        }
-        .fade-out {
-            opacity: 0;
-        }
         /* Cacher la barre de défilement */
         body {
             -ms-overflow-style: none;
@@ -81,31 +74,94 @@
             border-top: 2px dashed rgba(255,255,255,0.3);
             margin: 1.5rem 0;
         }
-        /* Style pour la modale de connexion */
-        #login-modal {
-            background-image: url('https://raw.githubusercontent.com/KaporalClems/DSR-PROS/511c8885b18d664dd25e29ec83ec5a61164de508/Destination-Sud-Reunion-Rencontre-BTOB-2025.png');
-            background-size: cover;
-            background-position: center;
-            transition: opacity 0.3s ease;
-        }
-        #login-modal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5); /* Overlay noir semi-transparent */
-            z-index: 1;
-        }
-        #login-modal > div {
-            z-index: 2;
-        }
-        #fullscreen-modal {
-            z-index: 100;
-        }
         #message-modal {
             background-color: rgba(0, 0, 0, 0.7);
+        }
+        /* Styles pour la modale du pass */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 2rem;
+            border-radius: 1rem;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+        .pass {
+            background: linear-gradient(to bottom right, #4F46E5, #3B82F6);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+        }
+        .pass h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .pass p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        .pass .code {
+            margin-top: 1rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            background-color: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+        #barcode {
+            margin-top: 1rem;
+            background-color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #saveBtn {
+            background-color: #10B981;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #saveBtn:hover {
+            background-color: #059669;
+        }
+
+        #sideMenu {
+            transition: left 0.3s ease-in-out;
+            z-index: 50;
         }
     </style>
 </head>
@@ -129,7 +185,7 @@
                         <button id="search-btn-mobile" class="md:hidden">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </button>
-                        <button id="menu-btn" class="relative">
+                        <button id="menuBtn" class="relative">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
                         </button>
                     </div>
@@ -140,27 +196,28 @@
                         <input type="text" id="searchInputMobile" placeholder="🔎 Rechercher un prestataire..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors text-gray-800">
                     </div>
                 </div>
-                <!-- Menu de navigation -->
-                <div id="menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl py-1 z-50 hidden">
-                    <a href="home.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Accueil</a>
-                    <a href="prestataires.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Prestataires</a>
-                    <a href="intervenants.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Intervenants</a>
-                    <a href="programme.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Programme</a>
-                    <a href="scanner.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Scanner</a>
-                    <a href="checklist.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Checklist</a>
-                    <a href="apropos.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">À propos</a>
-                    <div class="border-t border-gray-200 mt-1"></div>
-                    <button id="sign-out-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Se déconnecter</button>
-                </div>
             </div>
         </header>
         
+        <!-- Menu de navigation latérale -->
+        <nav id="sideMenu" class="fixed top-0 left-[-250px] w-64 h-full bg-white shadow-lg p-4 pt-16 md:hidden">
+            <a href="home.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Accueil</a>
+            <a href="prestataires.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Prestataires</a>
+            <a href="intervenants.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Intervenants</a>
+            <a href="programme.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Programme</a>
+            <a href="scanner.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Scanner</a>
+            <a href="checklist.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Checklist</a>
+            <a href="apropos.html" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">À propos</a>
+            <div class="border-t border-gray-200 mt-1"></div>
+            <button id="sign-out-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">Se déconnecter</button>
+        </nav>
+
         <!-- Contenu principal -->
         <main class="flex-grow overflow-y-auto p-4 pb-20">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Liste des prestataires</h2>
-            <div id="prestatairesList" class="space-y-4">
+            <ul id="prestatairesList" class="space-y-4">
                 <!-- Les cartes des prestataires seront injectées ici par JavaScript -->
-            </div>
+            </ul>
         </main>
         
         <!-- Footer / Barre de navigation -->
@@ -182,46 +239,9 @@
         </footer>
     </div>
 
-    <!-- Modale de ticket PKPASS -->
-    <div id="ticket-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl p-6 shadow-xl w-full max-w-sm">
-            <!-- Contenu de la carte de pass -->
-            <div class="pass-card bg-gradient-to-br from-blue-500 to-blue-700">
-                <div class="flex items-center">
-                    <img src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo" class="h-10 w-10 mr-4 rounded-full bg-white p-1">
-                    <h2 class="text-lg font-bold">PASS DSR PROS</h2>
-                </div>
-                <div class="dotted-line"></div>
-                <div class="flex justify-between items-center text-sm font-light mb-4">
-                    <div>
-                        <p class="opacity-80">NOM</p>
-                        <p id="pass-nom" class="font-semibold text-lg uppercase"></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="opacity-80">ENTREPRISE</p>
-                        <p id="pass-entreprise" class="font-semibold text-lg"></p>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center text-sm font-light mb-4">
-                    <div>
-                        <p class="opacity-80">STATUT</p>
-                        <p id="pass-statut" class="font-semibold text-lg"></p>
-                    </div>
-                     <div class="text-right">
-                        <p class="opacity-80">ID</p>
-                        <p id="pass-id" class="font-semibold text-lg"></p>
-                    </div>
-                </div>
-                <!-- QR Code sur le ticket -->
-                <div class="flex justify-center mt-6">
-                    <div id="pass-qrcode" class="bg-white p-2 rounded-lg"></div>
-                </div>
-            </div>
-            
-            <button id="close-ticket-btn" class="w-full mt-4 bg-gray-200 text-gray-800 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
-                Fermer
-            </button>
-        </div>
+    <!-- Modale de pass -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content" id="modalContent"></div>
     </div>
     
     <!-- Modale de message (erreurs, etc.) -->
@@ -246,42 +266,38 @@
         </div>
     </div>
 
-    <!-- Script pour la génération des QR codes et la gestion des données -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Script pour la gestion des données Supabase et des modales -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
+        import JsBarcode from "https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/+esm";
         
-        // Variables globales pour Firebase
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // ===============================
+        // DSR PROS - app.js complet
+        // ===============================
+        
+        // ========= CONFIG SUPABASE =========
+        // ⚠️ Remplace par tes propres clés Supabase si besoin
+        const supabaseUrl = "https://ltryylhccibeegksgtva.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0cnl5bGhjY2liZWVna3NndHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDk3NzcsImV4cCI6MjA3MTk4NTc3N30.mRzhae2CTxhGaOz7R5JDvBZv9v1v3Mcw9VMwh4Xg5nQ";
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
         // Éléments DOM
         const elements = {
             prestatairesList: document.getElementById('prestatairesList'),
-            ticketModal: document.getElementById('ticket-modal'),
-            closeTicketBtn: document.getElementById('close-ticket-btn'),
-            passNom: document.getElementById('pass-nom'),
-            passEntreprise: document.getElementById('pass-entreprise'),
-            passStatut: document.getElementById('pass-statut'),
-            passId: document.getElementById('pass-id'),
-            passQrcode: document.getElementById('pass-qrcode'),
             searchInput: document.getElementById('searchInput'),
             searchInputMobile: document.getElementById('searchInputMobile'),
             searchBtnMobile: document.getElementById('search-btn-mobile'),
             mobileSearchBar: document.getElementById('mobile-search-bar'),
-            menuBtn: document.getElementById('menu-btn'),
-            menuDropdown: document.getElementById('menu-dropdown'),
+            menuBtn: document.getElementById('menuBtn'),
+            sideMenu: document.getElementById('sideMenu'),
+            modal: document.getElementById('modal'),
+            modalContent: document.getElementById('modalContent'),
             messageModal: document.getElementById('message-modal'),
             closeMessageModalBtn: document.getElementById('close-message-modal-btn'),
         };
 
-        let app, db, auth;
-        let allPrestataires = [];
-
-        // Fonctions
+        // ========= FONCTIONS UTILES =========
         function showMessageModal(title, message) {
             elements.messageModal.querySelector('#modal-title').textContent = title;
             elements.messageModal.querySelector('#modal-message').textContent = message;
@@ -292,157 +308,117 @@
             elements.messageModal.classList.add('hidden');
         }
 
-        async function initFirebase() {
-            try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
+        function escapeHtml(unsafe) {
+          if (unsafe == null) return "";
+          return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
+        // ========= INTERVENANTS & PRESTATAIRES =========
+        async function loadPrestataires() {
+            const { data, error } = await supabase.from("prestataires").select("*");
+            if (error) {
+                console.error("Erreur chargement prestataires:", error);
+                showMessageModal("Erreur de chargement", "Impossible de charger les prestataires ❌");
+                return;
+            }
+            const list = document.getElementById("prestatairesList");
+            if (list) {
+                if (data && data.length > 0) {
+                    list.innerHTML = data.map(item => `
+                        <li class="bg-white p-4 rounded-xl shadow-md flex items-center space-x-4 list-item cursor-pointer" 
+                            data-id="${escapeHtml(item.id)}"
+                            data-nom="${escapeHtml(item.nom)}"
+                            data-prenom="${escapeHtml(item.prenom)}"
+                            data-entreprise="${escapeHtml(item.entreprise)}">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold text-xl">${item.nom ? item.nom[0] : ''}</div>
+                            <div class="flex-grow">
+                                <div class="font-semibold text-gray-800">${item.nom} ${item.prenom}</div>
+                                <div class="text-sm text-gray-500">${item.entreprise}</div>
+                            </div>
+                        </li>`).join("");
                 } else {
-                    await signInAnonymously(auth);
+                    list.innerHTML = "<p class='text-center text-gray-500 mt-8'>Aucun prestataire trouvé.</p>";
                 }
-                console.log("Firebase initialized and authenticated.");
-                loadPrestataires();
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                showMessageModal("Erreur de connexion", "Impossible de se connecter au serveur. Veuillez réessayer plus tard.");
             }
         }
         
-        function getCollectionPath() {
-             return `/artifacts/${appId}/public/data/prestataires`;
-        }
+        // ========= FONCTION MODALE PASS =========
+        function renderPassModal(id, nom, prenom, entreprise) {
+            const modal = elements.modal;
+            const content = elements.modalContent;
 
-        async function loadPrestataires() {
-            if (!db) {
-                console.error("Firestore is not initialized.");
-                return;
-            }
+            content.innerHTML = `
+                <span class="close-btn">&times;</span>
+                <div id="passCard" class="pass">
+                    <h2>${prenom} ${nom}</h2>
+                    <p><b>Entreprise :</b> ${entreprise}</p>
+                    <div class="code">#${id}</div>
+                    <svg id="barcode"></svg>
+                </div>
+                <button id="saveBtn">💾 Exporter en PNG</button>
+            `;
 
-            const q = query(collection(db, getCollectionPath()));
+            modal.style.display = "flex";
 
-            onSnapshot(q, (querySnapshot) => {
-                allPrestataires = [];
-                querySnapshot.forEach((doc) => {
-                    allPrestataires.push({ id: doc.id, ...doc.data() });
+            // Génération du barcode
+            JsBarcode("#barcode", id.toString(), {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 50,
+                displayValue: true
+            });
+
+            // Fermer modale
+            document.querySelector("#modalContent .close-btn").onclick = () => modal.style.display = "none";
+
+            // Export PNG
+            document.getElementById("saveBtn").onclick = () => {
+                html2canvas(document.getElementById("passCard")).then(canvas => {
+                    const link = document.createElement("a");
+                    const fileName = `${prenom}_${nom}_prestataire_pass.png`;
+                    link.download = fileName;
+                    link.href = canvas.toDataURL();
+                    link.click();
                 });
-                renderPrestataires(allPrestataires);
-            }, (error) => {
-                console.error("Error fetching documents: ", error);
-                showMessageModal("Erreur de connexion", "Impossible de charger les prestataires.");
-            });
+            };
         }
 
-        function renderPrestataires(prestataires) {
-            elements.prestatairesList.innerHTML = '';
-            if (prestataires.length === 0) {
-                elements.prestatairesList.innerHTML = '<p class="text-center text-gray-500 mt-8">Aucun prestataire n\'a été trouvé.</p>';
-                return;
-            }
-
-            prestataires.forEach((data) => {
-                const prestataireItem = document.createElement('div');
-                prestataireItem.className = 'bg-white p-4 rounded-xl shadow-md flex items-center space-x-4 list-item cursor-pointer';
-                prestataireItem.dataset.id = data.id;
-                prestataireItem.innerHTML = `
-                    <div class="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold text-xl">${data.nom[0]}</div>
-                    <div class="flex-grow">
-                        <div class="font-semibold text-gray-800">${data.nom}</div>
-                        <div class="text-sm text-gray-500">${data.entreprise}</div>
-                    </div>
-                    <div class="text-right">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.statut === 'Payé' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-                            ${data.statut}
-                        </span>
-                    </div>
-                `;
-                elements.prestatairesList.appendChild(prestataireItem);
-            });
-        }
-
-        function filterPrestataires() {
-            const searchTerm = (elements.searchInput.value || elements.searchInputMobile.value).toLowerCase();
-            const filtered = allPrestataires.filter(p => 
-                p.nom.toLowerCase().includes(searchTerm) || 
-                p.entreprise.toLowerCase().includes(searchTerm)
-            );
-            renderPrestataires(filtered);
-        }
-
-        function createPassCard(data) {
-            elements.passNom.textContent = data.nom || 'N/A';
-            elements.passEntreprise.textContent = data.entreprise || 'N/A';
-            elements.passStatut.textContent = data.statut || 'N/A';
-            elements.passId.textContent = data.passId || 'N/A';
-            elements.passQrcode.innerHTML = '';
-            new QRCode(elements.passQrcode, {
-                text: JSON.stringify({ passId: data.passId, statut: data.statut }),
-                width: 128,
-                height: 128,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            elements.ticketModal.classList.remove('hidden');
-        }
-
-        function setupEventListeners() {
-            // Écoute les entrées de la barre de recherche
-            elements.searchInput.addEventListener('input', filterPrestataires);
-            elements.searchInputMobile.addEventListener('input', filterPrestataires);
-    
-            // Gère l'affichage de la barre de recherche mobile
-            elements.searchBtnMobile.addEventListener('click', () => {
-                elements.mobileSearchBar.classList.toggle('hidden');
-            });
-    
-            // Gère l'affichage du menu hamburger
-            elements.menuBtn.addEventListener('click', () => {
-                elements.menuDropdown.classList.toggle('hidden');
-            });
-    
-            // Gère les clics sur les cartes des prestataires
-            document.addEventListener('click', async (event) => {
-                // Ferme le menu déroulant si le clic est en dehors de la zone du menu et du bouton
-                if (!elements.menuDropdown.contains(event.target) && !elements.menuBtn.contains(event.target)) {
-                    elements.menuDropdown.classList.add('hidden');
+        // ========= GESTION DES ÉVÉNEMENTS =========
+        document.addEventListener("DOMContentLoaded", () => {
+            // Fix pour le menu Hamburger : Gérer correctement l'état initial
+            elements.menuBtn.addEventListener("click", () => {
+                if (elements.sideMenu.style.left === "0px") {
+                    elements.sideMenu.style.left = "-250px"; // Cacher le menu
+                } else {
+                    elements.sideMenu.style.left = "0px"; // Afficher le menu
                 }
-                
-                // Gère les clics sur les cartes des prestataires
-                if (event.target.closest('.list-item')) {
-                    const docId = event.target.closest('.list-item').dataset.id;
-                    try {
-                        const docRef = doc(db, getCollectionPath(), docId);
-                        const docSnap = await getDoc(docRef);
-                        if (docSnap.exists()) {
-                            createPassCard(docSnap.data());
-                        } else {
-                            console.log("No such document!");
-                            showMessageModal("Erreur", "Prestataire non trouvé.");
-                        }
-                    } catch (e) {
-                        console.error("Error getting document:", e);
-                        showMessageModal("Erreur", "Impossible de récupérer les détails du prestataire.");
-                    }
+            });
+
+            // Fermeture de la modale de message
+            elements.closeMessageModalBtn.addEventListener('click', hideMessageModal);
+
+            // Gestion des clics sur les cartes des prestataires
+            document.getElementById('prestatairesList').addEventListener('click', (event) => {
+                const listItem = event.target.closest('li');
+                if (listItem) {
+                    const id = listItem.dataset.id;
+                    const nom = listItem.dataset.nom;
+                    const prenom = listItem.dataset.prenom;
+                    const entreprise = listItem.dataset.entreprise;
+                    renderPassModal(id, nom, prenom, entreprise);
                 }
             });
             
-            // Gère la fermeture de la modale de ticket
-            elements.closeTicketBtn.addEventListener('click', () => {
-                elements.ticketModal.classList.add('hidden');
-            });
-
-            // Gère la fermeture de la modale de message
-            elements.closeMessageModalBtn.addEventListener('click', hideMessageModal);
-        }
-
-        // Initialisation de l'application
-        window.addEventListener('load', () => {
-            initFirebase();
-            setupEventListeners();
+            loadPrestataires();
         });
     </script>
 </body>
 </html>
+
 
