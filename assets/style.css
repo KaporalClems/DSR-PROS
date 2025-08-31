@@ -17,19 +17,19 @@ body {
 }
 
 /* =============================
-   HEADER & FOOTER
+   HEADER
 ============================= */
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: #004aad;
   color: white;
-  padding: 15px;
+  padding: 10px 15px;
   display: flex;
   align-items: center;
   z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 header h1 {
@@ -46,22 +46,47 @@ header h1 {
   cursor: pointer;
 }
 
+/* Barre de recherche dans le header */
+header input[type="text"] {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  width: 180px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease-in-out;
+}
+
+header input[type="text"]:focus {
+  width: 220px;
+  box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* =============================
+   FOOTER
+============================= */
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #004aad;
   color: white;
   display: flex;
   justify-content: space-around;
+  align-items: center;
   padding: 10px 0;
+  font-size: 1.2rem;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
 }
 
 footer a {
   color: white;
-  font-size: 22px;
   text-decoration: none;
+  transition: transform 0.2s;
+}
+
+footer a:hover {
+  transform: scale(1.2);
 }
 
 /* =============================
@@ -117,16 +142,17 @@ h2 {
 
 .list .item {
   padding: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
 }
 
 .list .item:hover {
-  transform: scale(1.02);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
   background: #f0f4ff;
 }
 
@@ -229,6 +255,7 @@ button#saveBtn {
   font-size: 16px;
   border-radius: 10px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 button#saveBtn:hover {
