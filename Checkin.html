@@ -3,143 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSR PROS 2025 - Historique</title>
-    
+    <title>Check-list - DSR PROS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
     <style>
-        /* Styles CSS extraits du fichier DSRPROS2025.htm */
-        body { font-family: 'Inter', sans-serif; scrollbar-width: none; -ms-overflow-style: none; }
-        body::-webkit-scrollbar { display: none; }
-        .pkpass-card {
-            position: relative; background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.3s ease-in-out;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .pkpass-card:hover { transform: scale(1.02); }
-        .pkpass-card::before, .pkpass-card::after {
-            content: ''; position: absolute; top: 50%; width: 30px; height: 30px; background: #f3f4f6; border-radius: 50%;
+        body::-webkit-scrollbar {
+            display: none;
         }
-        .pkpass-card::before { left: -15px; transform: translateY(-50%); }
-        .pkpass-card::after { right: -15px; transform: translateY(-50%); }
-        .pkpass-footer { height: 10px; width: 100%; }
-        .pkpass-footer.prestataire { background-color: #10B981; }
-        .pkpass-footer.intervenant { background-color: #3B82F6; }
-        .page-transition { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-100 font-sans h-screen overflow-hidden flex flex-col">
-
-    <header class="bg-gray-800 text-white p-4 flex items-center justify-between shadow-lg sticky top-0 z-20">
-        <div class="flex items-center space-x-2">
-            <a href="index.html">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" />
-                </svg>
-            </a>
-            <img src="https://frt.re/wp-content/uploads/2022/05/logo-DSR.png" alt="Logo DSR" class="h-8">
-        </div>
-        <h1 class="text-xl font-bold">Historique</h1>
-        <a href="admin.html" id="admin-btn" class="text-white focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM12 6C9.79 6 8 7.79 8 10V12H16V10C16 7.79 14.21 6 12 6ZM12 14C14.67 14 20 15.33 20 18V20H4V18C4 15.33 9.33 14 12 14Z" />
-            </svg>
-        </a>
-    </header>
-
-    <main id="app-content" class="flex-grow overflow-y-auto pb-20 page-transition">
-        <div class="p-4">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">Historique des Validations</h1>
-            <div id="checkin-list" class="space-y-3">
+<body class="bg-gray-100 font-sans">
+    <div id="app-page" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-md sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex-shrink-0">
+                        <a href="index.html">
+                            <img class="h-10 w-auto" src="https://www.sudreuniontourisme.fr/fileadmin/user_upload/Sud/logo2.png" alt="Logo DSR PROS">
+                        </a>
+                    </div>
+                    <div class="flex-1 text-center">
+                        <div class="text-xl font-bold text-gray-700">Check-list</div>
+                    </div>
+                    <div class="w-10"></div>
                 </div>
-        </div>
-    </main>
+            </div>
+        </header>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg flex justify-around p-2 border-t border-gray-200 z-30">
-        <a href="prestataires.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.33 4 18V20H20V18C20 15.33 14.67 14 12 14Z" />
-            </svg>
-            <span class="text-xs">Prestataires</span>
-        </a>
-        <a href="scanner.html" id="scan-button" class="scan-button bg-orange-500 text-white rounded-full w-16 h-16 flex items-center justify-center -mt-8 shadow-xl border-4 border-white z-40">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4ZM10 6H14V8H10V6ZM10 10H14V14H10V10ZM10 16H14V18H10V16Z" />
-            </svg>
-        </a>
-        <a href="intervenants.html" class="nav-btn text-gray-500 flex flex-col items-center w-1/5 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14ZM12 16C9.33 16 4 17.33 4 20V22H20V20C20 17.33 14.67 16 12 16ZM15 4H9V2H15V4Z" />
-            </svg>
-            <span class="text-xs">Intervenants</span>
-        </a>
-    </nav>
-    
-    <script>
-        // --- DONNÉES DE DÉMONSTRATION (état de l'application) ---
-        const appState = {
-            prestataires: [
-                { id: 'PREST01', nom: 'Dupont', prenom: 'Jean', entreprise: 'Tech Solutions', checkedIn: true, checkinTime: '10:30' },
-                { id: 'PREST02', nom: 'Martin', prenom: 'Marie', entreprise: 'Innovate SARL', checkedIn: true, checkinTime: '10:45' },
-                { id: 'PREST03', nom: 'Bernard', prenom: 'Luc', entreprise: 'Digital Services', checkedIn: false },
-            ],
-            intervenants: [
-                { id: 'INTER01', nom: 'Petit', prenom: 'Sophie', entreprise: 'Expert Conference', checkedIn: false },
-                { id: 'INTER02', nom: 'Robert', prenom: 'Paul', entreprise: 'Webinar Pro', checkedIn: true, checkinTime: '11:00' },
-            ]
-        };
+        <!-- Contenu principal -->
+        <main class="flex-grow overflow-y-auto pb-20 p-4">
+            <div class="flex flex-col items-center">
+                <h2 class="text-2xl font-bold text-gray-700">Check-list</h2>
+                <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
+            </div>
+        </main>
 
-        // --- SÉLECTION DES ÉLÉMENTS DU DOM ---
-        const dom = {
-            checkinList: document.getElementById('checkin-list')
-        };
-        
-        /**
-         * Rend la liste des check-ins.
-         */
-        const renderCheckinList = () => {
-            const allPeople = [...appState.prestataires, ...appState.intervenants];
-            const checkedInPeople = allPeople
-                .filter(p => p.checkedIn)
-                .sort((a, b) => {
-                    if (a.checkinTime && b.checkinTime) {
-                        return new Date(`2025-01-01T${b.checkinTime}`) - new Date(`2025-01-01T${a.checkinTime}`);
-                    }
-                    return 0;
-                });
-
-            dom.checkinList.innerHTML = '';
-            
-            if (checkedInPeople.length === 0) {
-                dom.checkinList.innerHTML = `<p class="text-center text-gray-500 mt-4">Aucune validation pour l'instant.</p>`;
-                return;
-            }
-
-            checkedInPeople.forEach(person => {
-                const card = document.createElement('div');
-                card.className = 'bg-white p-4 rounded-lg shadow-md flex items-center justify-between';
-                card.innerHTML = `
-                    <div>
-                        <p class="font-bold text-lg">${person.prenom} ${person.nom}</p>
-                        <p class="text-sm text-gray-600">${person.entreprise}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-semibold text-emerald-500">Validé</p>
-                        <p class="text-xs text-gray-500">${person.checkinTime || 'Heure non disponible'}</p>
-                    </div>
-                `;
-                dom.checkinList.appendChild(card);
-            });
-        };
-
-        // --- Initialisation de la page ---
-        document.addEventListener('DOMContentLoaded', () => {
-            renderCheckinList();
-        });
-    </script>
+        <!-- Footer / Barre de navigation -->
+        <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
+            <nav class="flex justify-around">
+                <a href="prestataires.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Prestataires</span>
+                </a>
+                <a href="scanner.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
+                    <span class="text-xs">Scanner</span>
+                </a>
+                <a href="intervenants.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="text-xs">Intervenants</span>
+                </a>
+            </nav>
+        </footer>
+    </div>
 </body>
 </html>
