@@ -1,0 +1,27 @@
+body { margin: 0; font-family: Arial, sans-serif; }
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px; background: #004aad; color: white;
+  position: fixed; top: 0; left: 0; right: 0; height: 50px;
+}
+main { padding: 70px 10px 60px; }
+footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around;
+  background: #004aad; color: white; height: 50px; align-items: center;
+}
+#sideMenu {
+  position: fixed; top: 0; left: -250px; width: 200px; height: 100%;
+  background: #333; color: white; padding-top: 60px;
+  transition: 0.3s;
+}
+#sideMenu a { display: block; padding: 10px; color: white; text-decoration: none; }
+#sideMenu a:hover { background: #444; }
+.grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+}
+.grid a {
+  display: flex; align-items: center; justify-content: center;
+  background: #eee; padding: 20px; border-radius: 8px;
+  text-decoration: none; color: #000; font-weight: bold;
+}
