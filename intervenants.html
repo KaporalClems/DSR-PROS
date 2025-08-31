@@ -5,14 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intervenants</title>
   <link rel="stylesheet" href="assets/style.css">
+  <!-- Librairies externes -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script type="module" src="assets/app.js"></script>
 </head>
 <body onload="loadIntervenants()">
+  <!-- HEADER -->
   <header>
     <button id="menuBtn">☰</button>
     <h1>Intervenants</h1>
   </header>
 
+  <!-- MENU -->
   <nav id="sideMenu">
     <a href="home.html">Accueil</a>
     <a href="intervenants.html">Intervenants</a>
@@ -23,11 +27,20 @@
     <a href="apropos.html">À propos</a>
   </nav>
 
+  <!-- CONTENU -->
   <main>
     <h2>Liste des intervenants</h2>
-    <ul id="intervenantsList"></ul>
+    <ul id="intervenantsList" class="list"></ul>
   </main>
 
+  <!-- MODALE -->
+  <div id="modal" class="modal">
+    <div class="modal-content" id="modalContent">
+      <span id="closeBtn">&times;</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
   <footer>
     <a href="intervenants.html">👨‍🏫</a>
     <a href="scanner.html">📷</a>
