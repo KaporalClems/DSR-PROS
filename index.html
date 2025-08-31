@@ -139,77 +139,43 @@
             </div>
         </header>
 
-        <!-- Contenu principal (change dynamiquement) -->
-        <main class="flex-grow overflow-y-auto pb-20">
-            <!-- Vue Accueil -->
-            <div id="home-view" class="p-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="prestataires-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        <span class="font-semibold text-gray-700 text-center">Prestataires</span>
-                    </div>
-                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="intervenants-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        <span class="font-semibold text-gray-700 text-center">Intervenants</span>
-                    </div>
-                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="checklist-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500 mb-2"><path d="M15 6.5A3.5 3.5 0 0 0 8.5 3A3.5 3.5 0 0 0 5 6.5A3.5 3.5 0 0 0 8.5 10a3.5 3.5 0 0 0 6.5-3.5Z"/><path d="M18.5 10a3.5 3.5 0 0 0 0-7H17a6.5 6.5 0 0 0-5 2.24"/><path d="m5 12 2 2 4-4"/><path d="m5 19 2 2 4-4"/><path d="M15 13h6"/><path d="M15 17h6"/></svg>
-                        <span class="font-semibold text-gray-700 text-center">Check-list</span>
-                    </div>
-                    <div class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow" data-target="programme-view">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500 mb-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                        <span class="font-semibold text-gray-700 text-center">Programme</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vues pour les listes (Prestataires, Intervenants) -->
-            <div id="prestataires-view" class="p-4 hidden">
-                <div class="space-y-4" id="prestataires-list">
-                     <!-- Contenu sera injecté par JS -->
-                </div>
-            </div>
-            <div id="intervenants-view" class="p-4 hidden">
-                <div class="space-y-4" id="intervenants-list">
-                    <!-- Contenu sera injecté par JS -->
-                </div>
+        <!-- Contenu principal -->
+        <main class="flex-grow overflow-y-auto pb-20 p-4">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Fonctionnalités</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="prestataires.html" class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="font-semibold text-gray-700 text-center">Prestataires</span>
+                </a>
+                <a href="intervenants.html" class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mb-2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span class="font-semibold text-gray-700 text-center">Intervenants</span>
+                </a>
+                <a href="checklist.html" class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500 mb-2"><path d="M15 6.5A3.5 3.5 0 0 0 8.5 3A3.5 3.5 0 0 0 5 6.5A3.5 3.5 0 0 0 8.5 10a3.5 3.5 0 0 0 6.5-3.5Z"/><path d="M18.5 10a3.5 3.5 0 0 0 0-7H17a6.5 6.5 0 0 0-5 2.24"/><path d="m5 12 2 2 4-4"/><path d="m5 19 2 2 4-4"/><path d="M15 13h6"/><path d="M15 17h6"/></svg>
+                    <span class="font-semibold text-gray-700 text-center">Check-list</span>
+                </a>
+                <a href="programme.html" class="menu-item bg-white p-6 rounded-xl shadow-md flex flex-col items-center justify-center cursor-pointer hover:shadow-lg transition-shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500 mb-2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    <span class="font-semibold text-gray-700 text-center">Programme</span>
+                </a>
             </div>
             
-            <!-- Vue Scanner -->
-            <div id="scanner-view" class="p-4 hidden flex flex-col items-center">
-                <div class="w-full max-w-md bg-gray-800 rounded-lg aspect-square mb-4 flex items-center justify-center">
-                    <p class="text-white">Zone de scan</p>
-                </div>
-                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Scanner un code</button>
-            </div>
-            
-            <!-- Vues Placeholder -->
-            <div id="checklist-view" class="p-4 hidden">
-                <h2 class="text-2xl font-bold text-gray-700">Check-list</h2>
-                <p class="mt-2 text-gray-600">Cette section est en cours de développement.</p>
-            </div>
-            <div id="programme-view" class="p-4 hidden flex flex-col items-center">
-                <h2 class="text-2xl font-bold text-gray-700 mb-4">Programme DSR PROS 2025</h2>
-                <img id="programme-image" src="https://raw.githubusercontent.com/KaporalClems/DSR-PROS/6ce9137ac5dfb09289cd2f5cf0a3a3ef1de87c8d/Programme%20DSR%20PROS%202025.png" alt="Programme DSR PROS 2025" class="w-full h-auto rounded-lg shadow-md cursor-pointer">
-                <button id="fullscreen-btn" class="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition duration-300">
-                    Agrandir
-                </button>
-            </div>
-
+            <p class="mt-8 text-sm text-gray-500 text-center">Navigation vers d'autres pages...</p>
         </main>
 
         <!-- Footer / Barre de navigation -->
         <footer class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-40">
             <nav class="flex justify-around">
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="prestataires-view">
+                <a href="prestataires.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span class="text-xs">Prestataires</span>
                 </a>
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="scanner-view">
+                <a href="scanner.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg>
                     <span class="text-xs">Scanner</span>
                 </a>
-                <a href="#" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors" data-target="intervenants-view">
+                <a href="intervenants.html" class="nav-item flex-1 text-center py-3 text-gray-500 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     <span class="text-xs">Intervenants</span>
                 </a>
@@ -334,38 +300,18 @@
             loginBtn: document.getElementById('login-btn'),
             loginMessage: document.getElementById('login-message'),
             pageTitle: document.getElementById('page-title'),
-            allViews: document.querySelectorAll('main > div'),
-            navItems: document.querySelectorAll('.nav-item'),
-            menuItems: document.querySelectorAll('.menu-item'),
             menuBtn: document.getElementById('menu-btn'),
             menuDropdown: document.getElementById('menu-dropdown'),
             signOutBtn: document.getElementById('sign-out-btn'),
-            prestatairesList: document.getElementById('prestataires-list'),
-            intervenantsList: document.getElementById('intervenants-list'),
             messageModal: document.getElementById('message-modal'),
             modalTitle: document.getElementById('modal-title'),
             modalMessage: document.getElementById('modal-message'),
             modalCloseBtn: document.getElementById('modal-close-btn'),
             userInfo: document.getElementById('user-info'),
-            // Nouveaux éléments pour la modale de ticket
-            ticketModal: document.getElementById('ticket-modal'),
-            closeTicketBtn: document.getElementById('close-ticket-btn'),
-            passNom: document.getElementById('pass-nom'),
-            passEntreprise: document.getElementById('pass-entreprise'),
-            passStatut: document.getElementById('pass-statut'),
-            passId: document.getElementById('pass-id'),
-            passQrcode: document.getElementById('pass-qrcode'),
-            passCard: document.querySelector('#ticket-modal .pass-card'),
             // Nouveaux éléments pour la fonctionnalité de mot de passe
             togglePasswordBtn: document.getElementById('toggle-password'),
             eyeOpenIcon: document.getElementById('eye-open'),
             eyeClosedIcon: document.getElementById('eye-closed'),
-            // Nouveaux éléments pour la modale plein écran
-            fullscreenBtn: document.getElementById('fullscreen-btn'),
-            fullscreenModal: document.getElementById('fullscreen-modal'),
-            fullscreenImage: document.getElementById('fullscreen-image'),
-            fullscreenCloseBtn: document.getElementById('fullscreen-close-btn'),
-            programmeImage: document.getElementById('programme-image')
         };
 
         // Simuler le chargement et afficher la page de connexion
@@ -411,7 +357,6 @@
             elements.loginPage.classList.add('hidden');
             // Afficher l'application principale
             elements.appPage.classList.remove('hidden');
-            navigateToView('home-view', 'Accueil');
         });
 
         // Gérer la "déconnexion"
@@ -420,34 +365,6 @@
             elements.loginPage.classList.remove('hidden');
         });
 
-        // Fonction de navigation
-        function navigateToView(viewId, title) {
-            elements.allViews.forEach(view => view.classList.add('hidden'));
-            const targetView = document.getElementById(viewId);
-            if (targetView) {
-                targetView.classList.remove('hidden');
-                elements.pageTitle.textContent = title;
-                
-                // Charger les données de la liste si nécessaire
-                if (viewId === 'prestataires-view') {
-                    startSupabaseListener('prestataires', elements.prestatairesList);
-                } else if (viewId === 'intervenants-view') {
-                    startSupabaseListener('intervenants', elements.intervenantsList);
-                }
-            }
-            updateActiveNav(viewId);
-        }
-
-        // Mettre à jour la navigation active dans le footer
-        function updateActiveNav(activeViewId) {
-            elements.navItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.target === activeViewId) {
-                    item.classList.add('active');
-                }
-            });
-        }
-        
         // Gérer le menu déroulant
         elements.menuBtn.addEventListener('click', () => {
             elements.menuDropdown.classList.toggle('hidden');
@@ -457,213 +374,6 @@
             if (!elements.menuBtn.contains(event.target) && !elements.menuDropdown.contains(event.target)) {
                 elements.menuDropdown.classList.add('hidden');
             }
-        });
-
-        // Écouteurs d'événements pour la navigation
-        elements.navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetText = item.querySelector('span').textContent;
-                navigateToView(item.dataset.target, targetText);
-            });
-        });
-
-        elements.menuItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetText = item.querySelector('span').textContent;
-                navigateToView(item.dataset.target, targetText);
-            });
-        });
-
-        // Écouteur en temps réel de Supabase
-        let listenerUnsubscribe = null;
-        async function startSupabaseListener(tableName, container) {
-            // S'il y a un écouteur actif, le désactiver d'abord
-            if (listenerUnsubscribe) {
-                listenerUnsubscribe.unsubscribe();
-                listenerUnsubscribe = null;
-            }
-
-            // Afficher un message de chargement
-            container.innerHTML = `<p class="text-center mt-8">Chargement des données...</p>`;
-
-            // Démarrer un écouteur en temps réel
-            listenerUnsubscribe = supabase
-                .channel(tableName)
-                .on('postgres_changes', { event: '*', schema: 'public', table: tableName }, payload => {
-                    fetchAndDisplayData(tableName, container);
-                })
-                .subscribe();
-
-            // Charger les données initiales
-            fetchAndDisplayData(tableName, container);
-        }
-
-        // Fonction pour récupérer et afficher les données de Supabase
-        async function fetchAndDisplayData(tableName, container) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .select('*');
-
-                if (error) throw error;
-                
-                if (data.length === 0) {
-                    container.innerHTML = `<p class="text-center mt-8 text-gray-500">Aucune donnée trouvée dans la table '${tableName}'.</p>`;
-                } else {
-                    renderList(data, container, tableName);
-                }
-            } catch (error) {
-                console.error(`Erreur de chargement pour ${tableName}:`, error);
-                container.innerHTML = `<p class="text-center mt-8 text-red-500">Erreur de chargement des données. Veuillez vérifier la console.</p>`;
-            }
-        }
-
-        // Fonction pour générer le HTML de la liste
-        function renderList(data, container, tableName) {
-            let html = '<div class="space-y-3">';
-            const tablePrefix = tableName.toUpperCase().slice(0, 5); // Ex: PREST or INTER
-            data.forEach((item, index) => {
-                const itemID = `${tablePrefix}${String(index + 1).padStart(2, '0')}`;
-                // J'ajoute un écouteur de clic sur toute la carte pour afficher le ticket
-                html += `
-                    <div class="bg-white p-4 rounded-xl shadow-md list-item cursor-pointer" data-id="${item.id}" data-table="${tableName}">
-                        <!-- QR Code -->
-                        <div id="qrcode-${item.id}" class="w-20 h-20"></div>
-                        
-                        <!-- Informations -->
-                        <div class="flex-1">
-                            <p class="font-bold text-gray-800">${item.prenom || ''} ${item.nom || ''}</p>
-                            <p class="text-sm text-gray-600">${item.entreprise || 'N/A'}</p>
-                            <p class="text-xs text-gray-400 mt-1">ID: ${item.barcode || item.id}</p>
-                        </div>
-
-                        <!-- Statut et bouton de validation -->
-                        <div class="flex flex-col items-end">
-                             <span class="text-sm font-semibold text-gray-500 mb-2">${itemID}</span>
-                             <button data-id="${item.id}" data-checked="${item.checked_in}" class="check-in-btn px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors ${item.checked_in ? 'bg-green-500' : 'bg-gray-400'}" onclick="event.stopPropagation();">
-                                ${item.checked_in ? 'Validé' : 'Valider'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            container.innerHTML = html;
-
-            // Générer les QR codes une fois que le HTML est dans le DOM
-            data.forEach(item => {
-                const qrcodeContainer = document.getElementById(`qrcode-${item.id}`);
-                if (qrcodeContainer && item.barcode) {
-                     new QRCode(qrcodeContainer, {
-                        text: item.barcode,
-                        width: 80,
-                        height: 80,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
-                    });
-                }
-            });
-
-            // Ajouter les écouteurs pour les boutons de check-in
-            container.querySelectorAll('.check-in-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleCheckIn(button.dataset.id, button.dataset.checked === 'true', tableName);
-                });
-            });
-
-            // Ajouter les écouteurs pour afficher le ticket
-            container.querySelectorAll('.list-item').forEach(card => {
-                card.addEventListener('click', () => {
-                    showTicketModal(card.dataset.id, card.dataset.table);
-                });
-            });
-        }
-
-        // Fonction pour gérer le check-in
-        async function toggleCheckIn(id, currentStatus, tableName) {
-            try {
-                const { error } = await supabase
-                    .from(tableName)
-                    .update({ checked_in: !currentStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                
-                showModal('Succès', `Statut mis à jour avec succès pour l'ID ${id}.`);
-            } catch(error) {
-                console.error('Erreur lors de la mise à jour du check-in:', error);
-                showModal('Erreur', "Une erreur est survenue lors de la mise à jour.", true);
-            }
-        }
-
-        // Fonction pour afficher la modale de ticket
-        async function showTicketModal(id, tableName) {
-            try {
-                const { data, error } = await supabase
-                    .from(tableName)
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) throw error;
-
-                // Changer la couleur du pass en fonction du type de personne
-                if (tableName === 'prestataires') {
-                    elements.passCard.style.background = 'linear-gradient(135deg, #2e8637, #34983f)';
-                } else if (tableName === 'intervenants') {
-                    elements.passCard.style.background = 'linear-gradient(135deg, #003680, #004aad)';
-                }
-                
-                // Mettre à jour le contenu de la modale
-                elements.passNom.textContent = `${data.prenom || ''} ${data.nom || ''}`;
-                elements.passEntreprise.textContent = data.entreprise || 'N/A';
-                elements.passStatut.textContent = data.checked_in ? 'Validé' : 'En attente';
-                elements.passStatut.classList.remove('text-green-500', 'text-yellow-500');
-                elements.passStatut.classList.add(data.checked_in ? 'text-green-500' : 'text-yellow-500');
-                elements.passId.textContent = data.barcode || data.id;
-
-                // Vider et générer le nouveau QR code
-                elements.passQrcode.innerHTML = '';
-                new QRCode(elements.passQrcode, {
-                    text: data.barcode || data.id,
-                    width: 128,
-                    height: 128,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-
-                // Afficher la modale
-                elements.ticketModal.classList.remove('hidden');
-
-            } catch(error) {
-                console.error('Erreur lors du chargement des données du ticket:', error);
-                showModal('Erreur', "Impossible de charger les données du ticket.", true);
-            }
-        }
-
-        // Gérer la fermeture de la modale de ticket
-        elements.closeTicketBtn.addEventListener('click', () => {
-            elements.ticketModal.classList.add('hidden');
-        });
-
-        // Gérer l'affichage plein écran de l'image du programme
-        elements.programmeImage.addEventListener('click', () => {
-            elements.fullscreenImage.src = elements.programmeImage.src;
-            elements.fullscreenModal.classList.remove('hidden');
-        });
-
-        elements.fullscreenBtn.addEventListener('click', () => {
-            elements.fullscreenImage.src = elements.programmeImage.src;
-            elements.fullscreenModal.classList.remove('hidden');
-        });
-
-        elements.fullscreenCloseBtn.addEventListener('click', () => {
-            elements.fullscreenModal.classList.add('hidden');
         });
         
         // Inscription du Service Worker pour la PWA
@@ -682,4 +392,3 @@
     </script>
 </body>
 </html>
-
