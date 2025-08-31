@@ -8,8 +8,8 @@ import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
 
 // ========= CONFIG SUPABASE =========
 // ⚠️ Remplace par tes propres clés Supabase
-const supabaseUrl = "https://xxxxx.supabase.co";
-const supabaseKey = "public-anon-key";
+const supabaseUrl = "https://ltryylhccibeegksgtva.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0cnl5bGhjY2liZWVna3NndHZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDk3NzcsImV4cCI6MjA3MTk4NTc3N30.mRzhae2CTxhGaOz7R5JDvBZv9v1v3Mcw9VMwh4Xg5nQ";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ========= MENU HAMBURGER =========
